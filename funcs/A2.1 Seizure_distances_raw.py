@@ -10,7 +10,7 @@ from scipy.spatial import distance
 
 from paths import ROOT_DIR
 from funcs.Global_settings.global_settings_plots import *
-import funcs.Global_settings.global
+from funcs.Global_settings.results import *
 
 
 plt.style.use ( selected_style )
@@ -36,11 +36,10 @@ def process_file (in_path):
     # Extract path components
     parts = Path ( in_path ).parts
 
-    # folder = "figures_shuffled"
     id_patient = parts[-1]
 
     # Ouput directory for data-results
-    out_subfolder = os.path.join (ROOT_DIR, output_path, id_patient)
+    out_subfolder = os.path.join (ROOT_DIR, result_file, id_patient)
     os.makedirs ( out_subfolder, exist_ok=True )
     print ( "Processing file:", in_path )
 
@@ -57,7 +56,7 @@ def process_file (in_path):
 
     if (n_seizures > 5):
 
-        '''NMF RESULTS - PLOTS'''
+        '''NMF RESULTS'''
         #################################################################
         filename_nmf = "NMF_BP_CA_normedBand.mat"
         NMF_all = sio.loadmat ( os.path.join ( in_path, filename_nmf ) )
@@ -69,10 +68,8 @@ def process_file (in_path):
         # Import the file with the final MEMD and STEMD results
         print ( "{}{}".format ( "Reading MEMD mat file ", id_patient ) )
         filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand.mat"
-        #filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand_shuffled.mat"
         MEMD_all = sio.loadmat ( os.path.join(in_path, filename_memd ))
         IMF_MEMD = MEMD_all["imf_memd"]
-        # IMF_MEMD = MEMD_all["imf_perm_memd"]
         [n_comp, n_imfs, n_time] = IMF_MEMD.shape
 
         ''' Computation of temporal Distance'''
@@ -81,10 +78,10 @@ def process_file (in_path):
             values_seizures = np.zeros((n_seizures, n_seizures))
             for i in range ( 0, n_seizures ):
                 for j in range ( 0, n_seizures ):
-                    # Computation of seizure distance
+                    # Computation of seizure distance (multivariate euclidean)
                     values_seizures[i, j] = abs (seizures_all[id_perm, j] - seizures_all[id_perm, i])
 
-            seizure_time_dist_perm.__setitem__('perm{}'.format(id_perm), values_seizures.copy())
+            seizure_time_dist_perm.__setitem__('time_dist', values_seizures.copy())
         sio.savemat(os.path.join(out_subfolder, "seizure_time_dist_{}.mat".format(id_patient)), seizure_time_dist_perm)
 
         '''Euclidean distance for IMFs across Dimensions'''
@@ -103,7 +100,7 @@ def process_file (in_path):
                 # seizure_dist_all.update(dict_value)
                 seizure_dist_mEucl.__setitem__ ( 'IMF{}'.format ( imf + 1 ), multi_euclidean_dist.copy () )
 
-            seizure_dist_mEucl_perm['perm{}'.format(id_perm)] = seizure_dist_mEucl
+            seizure_dist_mEucl_perm['eucl_dist'] = seizure_dist_mEucl
         # Save the Seizure distance matrix as a mat file
         sio.savemat ( os.path.join ( out_subfolder, "seizure_dist_eucl_{}.mat".format ( id_patient ) ), seizure_dist_mEucl_perm )
 
