@@ -1,3 +1,6 @@
 # This is the path where the results will be stored
 # Specify the name of the folder where the results will be stored
-results_file = "results"
+def set_folder():
+    global result_file
+    result_file = "results"
+
