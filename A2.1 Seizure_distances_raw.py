@@ -13,7 +13,6 @@ from funcs.Global_settings.global_settings_plots import *
 import funcs.Global_settings.global
 
 
-
 plt.style.use ( selected_style )
 mpl.rcParams.update ( rc )
 
