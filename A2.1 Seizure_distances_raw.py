@@ -14,8 +14,8 @@ from funcs.Global_settings.global_settings_plots import *
 plt.style.use ( selected_style )
 mpl.rcParams.update ( rc )
 
-"""Compute the seizure distance based on either the initial seizure timings or the shuffled ones using each IMF and Dimension for all patients
-Save the results. Implement Mantel test and save the results as well. 
+"""
+Computing the Multivariate Euclidean distance for each IMF  
 """
 
 '''Define the input paths'''
@@ -25,12 +25,7 @@ input_path = os.path.join ( "data", "longterm_preproc" )
 info_path = os.path.join ( "data", "info" )
 
 '''Define the output path'''
-output_path = os.path.join ( "results_results" )
-
-'''Define the output subfolder name'''
-subfolder = "Initial_data(No permutation)"
-
-out_subfolder_name = 'seizure_dist_Raw_Analysis'
+output_path = os.path.join ( "results" )
 
 
 # in_path = files[0]
@@ -44,17 +39,20 @@ def process_file (in_path):
     id_patient = parts[-1]
 
     # Ouput directory for data-results
-    out_subfolder = os.path.join (ROOT_DIR, output_path, id_patient, subfolder, out_subfolder_name)
+    out_subfolder = os.path.join (ROOT_DIR, output_path, id_patient)
     os.makedirs ( out_subfolder, exist_ok=True )
     print ( "Processing file:", in_path )
 
     '''Seizure information for each patient'''
     # Read the seizure information for the corresponding patient
     print('Reading seizure information')
-    seizures_file = sio.loadmat ( os.path.join (ROOT_DIR, output_path, folder, id_patient, subfolder, sub_name,  "seizure_all_{}".format(id_patient) ) )
-    seizures_all = seizures_file["seizures"]
-    n_seizures = seizures_file["n_seizures"][0][0]
-    n_permutations = seizures_file["n_permutations"][0][0]
+    filename_info = "{}_{}".format ( id_patient, "info.mat" )
+    info_all = sio.loadmat ( os.path.join ( ROOT_DIR, info_path, filename_info ) )
+    info_seizure = info_all["seizure_begin"]
+    ## Investigating the seizure events
+    info_seizure = np.floor ( info_seizure / 30 )
+    info_seizure_all = [int ( x ) for x in info_seizure]
+    n_seizures = len(info_seizure_all)
 
     if (n_seizures > 5):
 
@@ -115,12 +113,12 @@ def parallel_process ():
 
     folders = os.listdir ( os.path.join ( ROOT_DIR, input_path ) )
     files = [os.path.join ( ROOT_DIR, input_path, folder ) for folder in folders]
-    # files = [files[i] for i in [3,5,8,9,11,12, 13]]
-    # test the code
+
+    # Uncomment this line if you want to run the analysis for one patient
     # files = files[5:6]
 
     start_time = time.time ()
-    # Test to make sure concurrent map is working
+    # Parallel processing
     with ProcessPoolExecutor ( max_workers=4 ) as executor:
         futures = [executor.submit ( process_file, in_path ) for in_path in files]
         for future in as_completed ( futures ):
