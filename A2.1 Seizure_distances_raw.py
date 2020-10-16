@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial import distance
 
-from funcs.Global_settings.main import ROOT_DIR
+import paths
 from funcs.Global_settings.global_settings_plots import *
 
 plt.style.use ( selected_style )
@@ -24,9 +24,8 @@ input_path = os.path.join ( "data", "longterm_preproc" )
 # Path contains the seizure information
 info_path = os.path.join ( "data", "info" )
 
-'''Define the output path'''
-output_path = os.path.join ( "results" )
-
+# Get the name of the current script
+folder = os.path.basename(__file__) # This will be used to specify the name of the file that the output will be stored in the file results
 
 # in_path = files[0]
 
@@ -115,7 +114,7 @@ def parallel_process ():
     files = [os.path.join ( ROOT_DIR, input_path, folder ) for folder in folders]
 
     # Uncomment this line if you want to run the analysis for one patient
-    # files = files[5:6]
+    files = files[5:6]
 
     start_time = time.time ()
     # Parallel processing
