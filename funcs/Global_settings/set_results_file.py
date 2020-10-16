@@ -4,5 +4,6 @@
 def set_folder():
     global result_file
     result_file = "results"
+    return result_file
 
 
