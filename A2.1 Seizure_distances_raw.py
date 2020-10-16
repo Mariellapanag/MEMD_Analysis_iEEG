@@ -10,8 +10,8 @@ from scipy.spatial import distance
 
 from paths import ROOT_DIR
 from funcs.Global_settings.global_settings_plots import *
-import funcs.Global_settings.set_results_file
-
+import funcs.Global_settings.set_results_file as results
+results.set_folder()
 
 
 plt.style.use ( selected_style )
