@@ -1,4 +1,5 @@
 from pathlib import Path
+import glob
 import time
 import scipy.io as sio
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -10,15 +11,15 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import FigureCanvasPdf, PdfPages
 import matplotlib.ticker as tkr
 
-from MEMD_funcs.Global_settings.main import ROOT_DIR
-from MEMD_funcs.Global_settings.global_settings_plots import *
+from paths import ROOT_DIR
+from funcs.Global_settings.global_settings_plots import *
+from funcs.Global_settings.results import *
 
 plt.style.use ( selected_style )
 mpl.rcParams.update ( rc )
 
-"""Compute the seizure distance based on either the initial seizure timings or the shuffled ones using each IMF and Dimension for all patients
-Save the results. Implement Mantel test and save the results as well. 
-"""
+
+"""Heatmap of seizure distances standardised"""
 
 '''Define the input paths'''
 # Path contains all the results from the analysis
@@ -26,66 +27,41 @@ input_path = os.path.join ( "data", "longterm_preproc" )
 # Path contains the seizure information
 info_path = os.path.join ( "data", "info" )
 
-'''Define the output path'''
-output_path = os.path.join ( "final_results" )
-folder = "figures"
 
-'''Define the output subfolder name'''
-subfolder = "Initial_data(No permutation)"
+# Get the name of the current script
+folder = os.path.basename(__file__) # This will be used to specify the name of the file that the output will be stored in the file results
+folder = folder.split(".py")[0]
 
-out_subfolder_name = 'seizure_dist_Raw_Analysis'
+folder = "heatmap_seizure_stand"
 
-'''Choose run name from the following: 'initial', 'shuffle_total_random', 'shuffle_seizure_random', 'shuffle_seizure_slice' '''
-RUN_NAME = 'initial'
-
-selected_number = 50
-
-if RUN_NAME == 'initial':
-    sub_name = 'Initial_data'
-elif RUN_NAME == 'shuffle_total_random':
-    sub_name = 'shuffle_randomly_{}'.format(selected_number)
-elif RUN_NAME == 'shuffle_seizure_random':
-    sub_name = 'shuffle_seizure_times_{}'.format(selected_number)
-elif RUN_NAME == 'shuffle_seizure_slice':
-    sub_name = 'shuffle_seizure_vector_{}'.format(selected_number)
-else:
-    print('Please choose one of the available options for the parameter RUN_NAME')
-
+# Test for one file
 # in_path = files[0]
-
 
 def process_file (in_path):
 
     # Extract path components
     parts = Path ( in_path ).parts
 
-    # folder = "figures_shuffled"
+    # Extract the patient's id
     id_patient = parts[-1]
 
-    # Ouput directory for data-results
-    out_subfolder = os.path.join (ROOT_DIR, output_path, folder, id_patient, subfolder, sub_name,  out_subfolder_name)
+    # Output directory for data-results
+    out_subfolder = os.path.join (ROOT_DIR, result_file, id_patient, folder)
     os.makedirs ( out_subfolder, exist_ok=True )
     print ( "Processing file:", in_path )
 
     '''Seizure information for each patient'''
     # Read the seizure information for the corresponding patient
-    print('Reading Seizure Timings')
-    seizures_file = sio.loadmat ( os.path.join (ROOT_DIR, output_path, folder, id_patient, subfolder, sub_name,  "seizure_all_{}".format(id_patient) ) )
-    # seizures_all = seizures_file["seizures"]
-    n_seizures = seizures_file["n_seizures"][0][0]
-    n_permutations = seizures_file["n_permutations"][0][0]
+    print('Reading seizure information')
+    filename_info = "{}_{}".format ( id_patient, "info.mat" )
+    info_all = sio.loadmat ( os.path.join ( ROOT_DIR, info_path, filename_info ) )
+    info_seizure = info_all["seizure_begin"]
+    ## Investigating the seizure events
+    n_seizures = len(info_seizure)
 
     format = "pdf"
 
     if (n_seizures > 5):
-
-        '''NMF RESULTS - PLOTS'''
-        #################################################################
-        filename_nmf = "NMF_BP_CA_normedBand.mat"
-        NMF_all = sio.loadmat ( os.path.join ( in_path, filename_nmf ) )
-        H = NMF_all["H"]
-        # W = NMF_all["W"]
-        row, col = H.shape
 
         '''MEMD RESULTS'''
         # Import the file with the final MEMD and STEMD results
@@ -94,16 +70,18 @@ def process_file (in_path):
         #filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand_shuffled.mat"
         MEMD_all = sio.loadmat ( os.path.join(in_path, filename_memd ))
         IMF_MEMD = MEMD_all["imf_memd"]
-        # IMF_MEMD = MEMD_all["imf_perm_memd"]
         [n_comp, n_imfs, n_time] = IMF_MEMD.shape
 
-        '''Reading seizure dissimilarity matrix'''
-        DissM_FC_stand = sio.loadmat ( os.path.join (out_subfolder,  "DissMatFC_stand_{}".format(id_patient) ) )['DissFC_stand']
+        '''Path of standardised seizure distances and dissimilarity matrix'''
+        stand_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*Seizure_distances_stand_raw"))
 
-        '''Reading all seizure distances'''
+        '''Reading standardised seizure dissimilarity matrix'''
+        DissM_FC_stand = sio.loadmat ( os.path.join (stand_path[0],  "DissMatFC_stand_{}.mat".format(id_patient) ) )['DissFC_stand']
+
+        '''Reading all standardised seizure distances'''
         print('Reading Seizure Distances')
-        seizures_dist_eucl_all_stand = sio.loadmat ( os.path.join (out_subfolder,  "seizure_dist_eucl_stand_{}".format(id_patient) ) )
-        seizures_time_dist_stand = sio.loadmat ( os.path.join (out_subfolder,  "seizure_time_dist_stand_{}".format(id_patient) ) )
+        seizures_dist_eucl_all_stand = sio.loadmat ( os.path.join (stand_path[0],  "seizure_dist_eucl_stand_{}".format(id_patient) ) )
+        seizures_time_dist_stand = sio.loadmat ( os.path.join (stand_path[0],  "seizure_time_dist_stand_{}".format(id_patient) ) )['time_dist']
 
         x_axis_labels = np.arange ( 1, n_seizures + 1, 1 )
         y_axis_labels = np.arange ( 1, n_seizures + 1, 1 )
@@ -111,79 +89,75 @@ def process_file (in_path):
         print('Beginning plotting seizure dissimilarity')
         print('seizures:{}'.format(n_seizures))
 
-        '''Plot seizure dissimilarity matrix only in the "initial" folder'''
-        if n_permutations == 1:
-            # Heatmap of Seizure Dissimilarity matrix
-            fig, ax = plt.subplots ( figsize=(12, 8) )
-            formatter = tkr.ScalarFormatter(useMathText=True)
-            formatter.set_scientific(True)
-            formatter.set_powerlimits((-2, 2))
-            g = sns.heatmap ( DissM_FC_stand, xticklabels=x_axis_labels, yticklabels=y_axis_labels,
-                              rasterized = True,  cbar_kws={"format": formatter})
-            ax.set_xticklabels ( ax.get_xticklabels (), rotation=360 )
-            g.set_xlabel ( "Seizure" )
-            g.set_ylabel ( "Seizure" )
-            g.set_title ( "Dissimilarity matrix of seizures \n Functional Connectivity" )
-            plt.tight_layout()
-            fig_name = "V1.seizure_dissFC_matrix_stand_{}.{}".format (id_patient, "pdf" )
-            plt.savefig ( os.path.join ( out_subfolder, fig_name ), format=format )
-            plt.close("all")
+        '''Plot standardised seizure dissimilarity matrix'''
+        # Heatmap of Seizure Dissimilarity matrix
+        fig, ax = plt.subplots ( figsize=(12, 8) )
+        formatter = tkr.ScalarFormatter(useMathText=True)
+        formatter.set_scientific(True)
+        formatter.set_powerlimits((-2, 2))
+        g = sns.heatmap ( DissM_FC_stand, xticklabels=x_axis_labels, yticklabels=y_axis_labels,
+                          rasterized = True, square  =True,  cbar_kws={"format": formatter})
+        ax.set_xticklabels ( ax.get_xticklabels (), rotation=360 )
+        g.set_xlabel ( "Seizure" )
+        g.set_ylabel ( "Seizure" )
+        g.set_title ( "Dissimilarity matrix of seizures \n Functional Connectivity" )
+        plt.tight_layout()
+        fig_name = "V1.seizure_dissFC_matrix_stand_{}.{}".format (id_patient, "pdf" )
+        plt.savefig ( os.path.join ( out_subfolder, fig_name ), format=format )
+        plt.close("all")
 
-            # Mask the upper triangular matrix
-            mask = np.zeros_like ( DissM_FC_stand, dtype=np.bool )
-            mask[np.triu_indices_from ( mask )] = True
-            # Want diagonal elements as well
-            mask[np.diag_indices_from ( mask )] = True
+        # Heatmap of Seizure Dissimilarity matrix - revealing only the lower triangular values (grey squares to all others)
+        # Mask the upper triangular matrix
+        mask = np.zeros_like ( DissM_FC_stand, dtype=np.bool )
+        mask[np.triu_indices_from ( mask )] = True
+        # Want diagonal elements as well
+        mask[np.diag_indices_from ( mask )] = True
 
-            # Heatmap of Seizure Dissimilarity matrix
-            fig, ax = plt.subplots ( figsize=(12, 8) )
-            formatter = tkr.ScalarFormatter(useMathText=True)
-            formatter.set_scientific(True)
-            formatter.set_powerlimits((-2, 2))
-            g = sns.heatmap ( DissM_FC_stand, xticklabels=x_axis_labels, yticklabels=y_axis_labels,
-                              rasterized = True, square = True,  cbar_kws={"format": formatter}, mask=mask)
-            ax.set_xticklabels ( ax.get_xticklabels (), rotation=360 )
-            g.set_xlabel ( "Seizure" )
-            g.set_ylabel ( "Seizure" )
-            g.set_title ( "Dissimilarity matrix of seizures \n Functional Connectivity" )
-            plt.tight_layout()
-            fig_name = "V2.seizure_dissFC_matrix_stand_{}.{}".format (id_patient, "pdf" )
-            plt.savefig ( os.path.join ( out_subfolder, fig_name ), format=format )
-            plt.close("all")
+        # Heatmap of Seizure Dissimilarity matrix
+        fig, ax = plt.subplots ( figsize=(12, 8) )
+        formatter = tkr.ScalarFormatter(useMathText=True)
+        formatter.set_scientific(True)
+        formatter.set_powerlimits((-2, 2))
+        g = sns.heatmap ( DissM_FC_stand, xticklabels=x_axis_labels, yticklabels=y_axis_labels,
+                          rasterized = True, square = True,  cbar_kws={"format": formatter}, mask=mask)
+        ax.set_xticklabels ( ax.get_xticklabels (), rotation=360 )
+        g.set_xlabel ( "Seizure" )
+        g.set_ylabel ( "Seizure" )
+        g.set_title ( "Dissimilarity matrix of seizures \n Functional Connectivity" )
+        plt.tight_layout()
+        fig_name = "V2.seizure_dissFC_matrix_stand_{}.{}".format (id_patient, "pdf" )
+        plt.savefig ( os.path.join ( out_subfolder, fig_name ), format=format )
+        plt.close("all")
 
+        ''' Plotting of time seizure distances'''
         print('Beginning plotting seizure distances')
         print('seizures:{}'.format(n_seizures))
 
-        ''' Plotting of time seizure distances'''
-        # Heatmap of Seizure Distance matrix
-
-        fig_name = "V1.seizure_time_dist_stand_{}_Allperm.{}".format (id_patient, "pdf" )
+        fig_name = "V1.seizure_time_dist_stand_{}.{}".format (id_patient, "pdf" )
         with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:
-            for id_perm in range(0, n_permutations):
 
-                fig, ax = plt.subplots(figsize=(12,8))
-                formatter = tkr.ScalarFormatter(useMathText=True)
-                formatter.set_scientific(True)
-                formatter.set_powerlimits((-2, 2))
-                g = sns.heatmap(seizures_time_dist_stand['perm{}'.format(id_perm)],
-                                xticklabels=x_axis_labels, yticklabels=y_axis_labels,
-                                rasterized = True, square = True,cbar_kws={"format": formatter})
-                ax.set_xticklabels ( ax.get_xticklabels (), rotation= 360)
-                g.set_xlabel ( "Seizure" )
-                g.set_ylabel ( "Seizure" )
-                g.set_title ( 'Seizure time distance perm{}'.format(id_perm) )
+            fig, ax = plt.subplots(figsize=(12,8))
+            formatter = tkr.ScalarFormatter(useMathText=True)
+            formatter.set_scientific(True)
+            formatter.set_powerlimits((-2, 2))
+            g = sns.heatmap(seizures_time_dist_stand,
+                            xticklabels=x_axis_labels, yticklabels=y_axis_labels,
+                            rasterized = True, square = True,cbar_kws={"format": formatter})
+            ax.set_xticklabels ( ax.get_xticklabels (), rotation= 360)
+            g.set_xlabel ( "Seizure" )
+            g.set_ylabel ( "Seizure" )
+            g.set_title ( 'Seizure time distance')
 
-                plt.tight_layout()
-                canvas = FigureCanvasPdf(fig)
-                canvas.print_figure(pages)
-                plt.close("all")
+            plt.tight_layout()
+            canvas = FigureCanvasPdf(fig)
+            canvas.print_figure(pages)
+            plt.close("all")
 
-        fig_name = "V2.seizure_time_dist_stand_{}_Allperm.{}".format (id_patient, "pdf" )
+        # Heatmap of Seizure time distance matrix - revealing only the lower triangular values (grey squares to all others)
+        fig_name = "V2.seizure_time_dist_stand_{}.{}".format (id_patient, "pdf" )
         with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:
-            for id_perm in range(0, n_permutations):
-
                 # Mask the upper triangular matrix
-                mask = np.zeros_like ( seizures_time_dist_stand['perm{}'.format(id_perm)], dtype=np.bool )
+                mask = np.zeros_like ( seizures_time_dist_stand, dtype=np.bool )
                 mask[np.triu_indices_from ( mask )] = True
                 # Want diagonal elements as well
                 mask[np.diag_indices_from ( mask )] = True
@@ -193,76 +167,130 @@ def process_file (in_path):
                 formatter = tkr.ScalarFormatter(useMathText=True)
                 formatter.set_scientific(True)
                 formatter.set_powerlimits((-2, 2))
-                g = sns.heatmap(seizures_time_dist_stand['perm{}'.format(id_perm)],
+                g = sns.heatmap(seizures_time_dist_stand,
                                 xticklabels=x_axis_labels, yticklabels=y_axis_labels,
                                 rasterized = True, square = True, cbar_kws={"format": formatter}, mask=mask)
                 ax.set_xticklabels ( ax.get_xticklabels (), rotation= 360)
                 g.set_xlabel ( "Seizure" )
                 g.set_ylabel ( "Seizure" )
-                g.set_title ( 'Seizure time distance perm{}'.format(id_perm) )
+                g.set_title ( 'Seizure time distance')
 
                 plt.tight_layout()
                 canvas = FigureCanvasPdf(fig)
                 canvas.print_figure(pages)
                 plt.close("all")
 
-        list_a = [seizures_dist_eucl_all_stand['perm{}'.format(id_perm)]['IMF{}'.format(imf+1)][0][0].ravel() for imf in range(0, n_imfs)]
+        # Heatmap of Seizure IMF distances
+        list_a = [seizures_dist_eucl_all_stand['IMF{}'.format(imf+1)].ravel() for imf in range(0, n_imfs)]
 
         min = np.array(list_a).min()
         max = np.array(list_a).max()
+
         '''Plotting of Euclidean distance for IMFs across Dimensions'''
         # Heatmap of Seizure Distance matrix
-        for id_perm in range(0, n_permutations):
-            fig_name = "V1.seizure_dist_eucl_stand_{}_perm{}.{}".format (id_patient, id_perm, format )
-            with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:
-                for imf in range(0, n_imfs):
+        fig_name = "V1.FixedRange_seizure_dist_eucl_stand_{}.{}".format (id_patient, format )
+        with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:
+            for imf in range(0, n_imfs):
 
-                    fig, ax = plt.subplots(figsize=(12,8))
-                    formatter = tkr.ScalarFormatter(useMathText=True)
-                    formatter.set_scientific(True)
-                    formatter.set_powerlimits((-2, 2))
-                    g = sns.heatmap(seizures_dist_eucl_all_stand['perm{}'.format(id_perm)]['IMF{}'.format(imf+1)][0][0]
-                                    , xticklabels=x_axis_labels, yticklabels=y_axis_labels,
-                                    rasterized = True,square = True, cbar_kws={"format": formatter}, vmin=min, vmax=max)
-                    ax.set_xticklabels ( ax.get_xticklabels (), rotation= 360)
-                    g.set_xlabel ( "Seizure" )
-                    g.set_ylabel ( "Seizure" )
-                    g.set_title ( 'Seizure distance IMF{}'.format(imf+1) )
+                fig, ax = plt.subplots(figsize=(12,8))
+                formatter = tkr.ScalarFormatter(useMathText=True)
+                formatter.set_scientific(True)
+                formatter.set_powerlimits((-2, 2))
+                g = sns.heatmap(seizures_dist_eucl_all_stand['IMF{}'.format(imf+1)]
+                                , xticklabels=x_axis_labels, yticklabels=y_axis_labels,
+                                rasterized = True,square = True, cbar_kws={"format": formatter}, vmin=min, vmax=max)
+                ax.set_xticklabels ( ax.get_xticklabels (), rotation= 360)
+                g.set_xlabel ( "Seizure" )
+                g.set_ylabel ( "Seizure" )
+                g.set_title ( 'Seizure distance IMF{}'.format(imf+1) )
 
-                    plt.tight_layout()
-                    canvas = FigureCanvasPdf(fig)
-                    canvas.print_figure(pages)
-                    plt.close("all")
+                plt.tight_layout()
+                canvas = FigureCanvasPdf(fig)
+                canvas.print_figure(pages)
+                plt.close("all")
 
         # Heatmap of Seizure Distance matrix
-        for id_perm in range(0, n_permutations):
-            fig_name = "V2.seizure_dist_eucl_stand_{}_perm{}.{}".format (id_patient, id_perm, format )
-            with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:
-                for imf in range(0, n_imfs):
+        fig_name = "V1.NonFixedRange_seizure_dist_eucl_stand_{}.{}".format (id_patient, format )
+        with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:
+            for imf in range(0, n_imfs):
 
-                    # Mask the upper triangular matrix
-                    mask = np.zeros_like ( seizures_dist_eucl_all_stand['perm{}'.format(id_perm)]['IMF{}'.format(imf+1)][0][0]
-                                           , dtype=np.bool )
-                    mask[np.triu_indices_from ( mask )] = True
-                    # Want diagonal elements as well
-                    mask[np.diag_indices_from ( mask )] = True
+                fig, ax = plt.subplots(figsize=(12,8))
+                formatter = tkr.ScalarFormatter(useMathText=True)
+                formatter.set_scientific(True)
+                formatter.set_powerlimits((-2, 2))
+                g = sns.heatmap(seizures_dist_eucl_all_stand['IMF{}'.format(imf+1)]
+                                , xticklabels=x_axis_labels, yticklabels=y_axis_labels,
+                                rasterized = True,square = True, cbar_kws={"format": formatter}, vmin=seizures_dist_eucl_all_stand['IMF{}'.format(imf+1)].min(),
+                                vmax= seizures_dist_eucl_all_stand['IMF{}'.format(imf+1)].max())
+                ax.set_xticklabels ( ax.get_xticklabels (), rotation= 360)
+                g.set_xlabel ( "Seizure" )
+                g.set_ylabel ( "Seizure" )
+                g.set_title ( 'Seizure distance IMF{}'.format(imf+1) )
 
-                    fig, ax = plt.subplots(figsize=(12,8))
-                    formatter = tkr.ScalarFormatter(useMathText=True)
-                    formatter.set_scientific(True)
-                    formatter.set_powerlimits((-2, 2))
-                    g = sns.heatmap(seizures_dist_eucl_all_stand['perm{}'.format(id_perm)]['IMF{}'.format(imf+1)][0][0]
-                                    , xticklabels=x_axis_labels, yticklabels=y_axis_labels,
-                                    rasterized = True, square = True, cbar_kws={"format": formatter}, mask=mask, vmin=min, vmax=max)
-                    ax.set_xticklabels ( ax.get_xticklabels (), rotation= 360)
-                    g.set_xlabel ( "Seizure" )
-                    g.set_ylabel ( "Seizure" )
-                    g.set_title ( 'Seizure distance IMF{}'.format(imf+1) )
+                plt.tight_layout()
+                canvas = FigureCanvasPdf(fig)
+                canvas.print_figure(pages)
+                plt.close("all")
 
-                    plt.tight_layout()
-                    canvas = FigureCanvasPdf(fig)
-                    canvas.print_figure(pages)
-                    plt.close("all")
+        # Heatmap of Seizure Distance matrix
+        fig_name = "V2.FixedRange_seizure_dist_eucl_stand_{}.{}".format (id_patient, format )
+        with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:
+            for imf in range(0, n_imfs):
+
+                # Mask the upper triangular matrix
+                mask = np.zeros_like ( seizures_dist_eucl_all_stand['IMF{}'.format(imf+1)]
+                                       , dtype=np.bool )
+                mask[np.triu_indices_from ( mask )] = True
+                # Want diagonal elements as well
+                mask[np.diag_indices_from ( mask )] = True
+
+                fig, ax = plt.subplots(figsize=(12,8))
+                formatter = tkr.ScalarFormatter(useMathText=True)
+                formatter.set_scientific(True)
+                formatter.set_powerlimits((-2, 2))
+                g = sns.heatmap(seizures_dist_eucl_all_stand['IMF{}'.format(imf+1)]
+                                , xticklabels=x_axis_labels, yticklabels=y_axis_labels,
+                                rasterized = True, square = True, cbar_kws={"format": formatter}, mask=mask, vmin=min, vmax=max)
+                ax.set_xticklabels ( ax.get_xticklabels (), rotation= 360)
+                g.set_xlabel ( "Seizure" )
+                g.set_ylabel ( "Seizure" )
+                g.set_title ( 'Seizure distance IMF{}'.format(imf+1) )
+
+                plt.tight_layout()
+                canvas = FigureCanvasPdf(fig)
+                canvas.print_figure(pages)
+                plt.close("all")
+
+                # Heatmap of Seizure Distance matrix
+        fig_name = "V2.NonFixedRange_seizure_dist_eucl_stand_{}.{}".format (id_patient, format )
+        with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:
+            for imf in range(0, n_imfs):
+
+                # Mask the upper triangular matrix
+                mask = np.zeros_like ( seizures_dist_eucl_all_stand['IMF{}'.format(imf+1)]
+                                       , dtype=np.bool )
+                mask[np.triu_indices_from ( mask )] = True
+                # Want diagonal elements as well
+                mask[np.diag_indices_from ( mask )] = True
+
+                fig, ax = plt.subplots(figsize=(12,8))
+                formatter = tkr.ScalarFormatter(useMathText=True)
+                formatter.set_scientific(True)
+                formatter.set_powerlimits((-2, 2))
+                g = sns.heatmap(seizures_dist_eucl_all_stand['IMF{}'.format(imf+1)]
+                                , xticklabels=x_axis_labels, yticklabels=y_axis_labels,
+                                rasterized = True, square = True, cbar_kws={"format": formatter}, mask=mask,
+                                vmin=seizures_dist_eucl_all_stand['IMF{}'.format(imf+1)].min(),
+                                vmax=seizures_dist_eucl_all_stand['IMF{}'.format(imf+1)].max())
+                ax.set_xticklabels ( ax.get_xticklabels (), rotation= 360)
+                g.set_xlabel ( "Seizure" )
+                g.set_ylabel ( "Seizure" )
+                g.set_title ( 'Seizure distance IMF{}'.format(imf+1) )
+
+                plt.tight_layout()
+                canvas = FigureCanvasPdf(fig)
+                canvas.print_figure(pages)
+                plt.close("all")
 
 def parallel_process ():
     processed = 0
