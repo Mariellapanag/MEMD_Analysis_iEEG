@@ -37,7 +37,7 @@ def process_file (in_path):
 
     id_patient = parts[-1]
 
-    # Ouput directory for data-results
+    # Output directory for data-results
     out_subfolder = os.path.join (ROOT_DIR, result_file, id_patient, folder)
     os.makedirs ( out_subfolder, exist_ok=True )
     print ( "Processing file:", in_path )
@@ -54,14 +54,6 @@ def process_file (in_path):
     n_seizures = len(seizures_all)
 
     if (n_seizures > 5):
-
-        '''NMF RESULTS'''
-        #################################################################
-        filename_nmf = "NMF_BP_CA_normedBand.mat"
-        NMF_all = sio.loadmat ( os.path.join ( in_path, filename_nmf ) )
-        H = NMF_all["H"]
-        W = NMF_all["W"]
-        row, col = H.shape
 
         '''MEMD RESULTS'''
         # Import the file with the final MEMD and STEMD results
