@@ -28,6 +28,7 @@ the python script file running within the _**results**_ folder.
 In the python files used by the user, there is the choice of generating the results for 1 or more patients or
 for all patients using parallel programming.
 The exact lines of code appear in each python file the user can run are the following:
+
 ```python
 def parallel_process ():
     processed = 0
@@ -52,10 +53,12 @@ Using the above code chunk the user can generate results for all patients using 
 
 For running the chosen python scripts for **one patient**, for example **patient ID06**, user needs
  to add the following line of code:
+ 
 ```python
 files = files[5:6]
 ```
 The final code chunk would look like this:
+
 ```python
 def parallel_process ():
     processed = 0
@@ -78,10 +81,36 @@ def parallel_process ():
     print ( "Processed {} files in {:.2f} seconds.".format ( processed, end_time - start_time ) )
 
 ```
+For running the chosen python scripts for **more than one subject**, for example **subjects ID02, ID03, ID04, ID05**, user needs
+ to add the following line of code:
+ 
+```python
+files = [files[i] for i in [2,3,4,5]]
+```
+The final code chunk would look like this:
 
+```python
+def parallel_process ():
+    processed = 0
 
+    folders = os.listdir ( os.path.join ( ROOT_DIR, input_path ) )
+    files = [os.path.join ( ROOT_DIR, input_path, folder ) for folder in folders]
 
+    files = [files[i] for i in [2,3,4,5]]
 
+    start_time = time.time ()
+    # Test to make sure concurrent map is working
+    with ProcessPoolExecutor ( max_workers=4 ) as executor:
+        futures = [executor.submit ( process_file, in_path ) for in_path in files]
+        for future in as_completed ( futures ):
+            # if future.result() == True:
+            processed += 1
+            print ( "Processed {}files.".format ( processed, len ( files ) ), end="\r" )
+
+    end_time = time.time ()
+    print ( "Processed {} files in {:.2f} seconds.".format ( processed, end_time - start_time ) )
+
+```
 
 ## Main Figures
 Main Figures .......
@@ -110,11 +139,4 @@ the spearman correlation values displayed in the title of the plots.
 Mantel test results are also generated, but not displayed in the scatterplots, as they will be used later on, in order to perform FDR to all patients.
 
 
-## Setup
-To run this project, install it locally using npm:
 
-```
-$ cd ../lorem
-$ npm install
-$ npm start
-```
