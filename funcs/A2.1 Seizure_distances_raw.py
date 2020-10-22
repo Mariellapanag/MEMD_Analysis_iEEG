@@ -12,12 +12,11 @@ from paths import ROOT_DIR
 from funcs.Global_settings.global_settings_plots import *
 from funcs.Global_settings.results import *
 
-
 plt.style.use ( selected_style )
 mpl.rcParams.update ( rc )
 
 """
-Computing the Multivariate Euclidean distance for each IMF  
+Computing the temporal distance and the Multivariate Euclidean distance for each IMF  
 """
 
 '''Define the input paths'''
@@ -28,7 +27,7 @@ info_path = os.path.join ( "data", "info" )
 
 # Get the name of the current script
 folder = os.path.basename(__file__) # This will be used to specify the name of the file that the output will be stored in the file results
-
+folder = folder.slpit(".py")[0]
 # in_path = files[0]
 
 def process_file (in_path):
@@ -39,7 +38,7 @@ def process_file (in_path):
     id_patient = parts[-1]
 
     # Ouput directory for data-results
-    out_subfolder = os.path.join (ROOT_DIR, result_file, id_patient)
+    out_subfolder = os.path.join (ROOT_DIR, result_file, id_patient, folder)
     os.makedirs ( out_subfolder, exist_ok=True )
     print ( "Processing file:", in_path )
 
@@ -51,8 +50,8 @@ def process_file (in_path):
     info_seizure = info_all["seizure_begin"]
     ## Investigating the seizure events
     info_seizure = np.floor ( info_seizure / 30 )
-    info_seizure_all = [int ( x ) for x in info_seizure]
-    n_seizures = len(info_seizure_all)
+    seizures_all = [int ( x ) for x in info_seizure]
+    n_seizures = len(seizures_all)
 
     if (n_seizures > 5):
 
@@ -74,33 +73,33 @@ def process_file (in_path):
 
         ''' Computation of temporal Distance'''
         seizure_time_dist_perm = {}
-        for id_perm in range ( 0, n_permutations):
-            values_seizures = np.zeros((n_seizures, n_seizures))
-            for i in range ( 0, n_seizures ):
-                for j in range ( 0, n_seizures ):
-                    # Computation of seizure distance (multivariate euclidean)
-                    values_seizures[i, j] = abs (seizures_all[id_perm, j] - seizures_all[id_perm, i])
+        values_seizures = np.zeros((n_seizures, n_seizures))
+        for i in range ( 0, n_seizures ):
+            for j in range ( 0, n_seizures ):
+                # Computation of seizure temporal distance
+                values_seizures[i, j] = abs (seizures_all[j] - seizures_all[i])
 
-            seizure_time_dist_perm.__setitem__('time_dist', values_seizures.copy())
+        seizure_time_dist_perm.__setitem__('time_dist', values_seizures.copy())
+        # save the seizure distance matrix as a mat file
         sio.savemat(os.path.join(out_subfolder, "seizure_time_dist_{}.mat".format(id_patient)), seizure_time_dist_perm)
 
         '''Euclidean distance for IMFs across Dimensions'''
         print('Beginning calculating seizure distance for each IMF across Dimensions')
         seizure_dist_mEucl_perm = {}
-        for id_perm in range ( 0, n_permutations ):
-            seizure_dist_mEucl = {}
-            for imf in range(0, n_imfs):
-                Raw_Matrix = np.matmul(W, IMF_MEMD[:, imf, :])
-                multi_euclidean_dist = np.zeros ( (n_seizures, n_seizures) )
-                for i in range ( 0, n_seizures ):
-                    for j in range ( 0, n_seizures ):
-                        xx = Raw_Matrix[:, int ( seizures_all[id_perm, i] )]
-                        yy = Raw_Matrix[:, int ( seizures_all[id_perm, j] )]
-                        multi_euclidean_dist[i,j] = distance.euclidean(xx,yy)
-                # seizure_dist_all.update(dict_value)
-                seizure_dist_mEucl.__setitem__ ( 'IMF{}'.format ( imf + 1 ), multi_euclidean_dist.copy () )
 
-            seizure_dist_mEucl_perm['eucl_dist'] = seizure_dist_mEucl
+        seizure_dist_mEucl = {}
+        for imf in range(0, n_imfs):
+            Raw_Matrix = np.matmul(W, IMF_MEMD[:, imf, :])
+            multi_euclidean_dist = np.zeros ( (n_seizures, n_seizures) )
+            for i in range ( 0, n_seizures ):
+                for j in range ( 0, n_seizures ):
+                    xx = Raw_Matrix[:, int ( seizures_all[i] )]
+                    yy = Raw_Matrix[:, int ( seizures_all[j] )]
+                    multi_euclidean_dist[i,j] = distance.euclidean(xx,yy)
+            # seizure_dist_all.update(dict_value)
+            seizure_dist_mEucl.__setitem__ ( 'IMF{}'.format ( imf + 1 ), multi_euclidean_dist.copy () )
+
+        seizure_dist_mEucl_perm['eucl_dist'] = seizure_dist_mEucl
         # Save the Seizure distance matrix as a mat file
         sio.savemat ( os.path.join ( out_subfolder, "seizure_dist_eucl_{}.mat".format ( id_patient ) ), seizure_dist_mEucl_perm )
 
@@ -113,7 +112,7 @@ def parallel_process ():
     files = [os.path.join ( ROOT_DIR, input_path, folder ) for folder in folders]
 
     # Uncomment this line if you want to run the analysis for one patient
-    files = files[5:6]
+    # files = files[5:6]
 
     start_time = time.time ()
     # Parallel processing
