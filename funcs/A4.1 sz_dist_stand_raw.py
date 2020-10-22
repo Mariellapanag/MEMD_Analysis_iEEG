@@ -87,7 +87,7 @@ def process_file (in_path):
 
         '''Reading all seizure time distances and seizure euclidean distances'''
         print('Reading Seizure Distances')
-        seizure_dist_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*Seizure_distances_raw"))
+        seizure_dist_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*sz_dist_raw"))
         seizures_dist_eucl_all = sio.loadmat ( os.path.join (seizure_dist_path[0],  "seizure_dist_eucl_{}.mat".format(id_patient) ) )
         seizures_time_dist = sio.loadmat ( os.path.join (seizure_dist_path[0],  "seizure_time_dist_{}.mat".format(id_patient) ) )['time_dist']
 

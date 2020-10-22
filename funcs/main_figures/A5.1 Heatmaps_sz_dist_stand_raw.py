@@ -73,7 +73,7 @@ def process_file (in_path):
         [n_comp, n_imfs, n_time] = IMF_MEMD.shape
 
         '''Path of standardised seizure distances and dissimilarity matrix'''
-        stand_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*Seizure_distances_stand_raw"))
+        stand_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*sz_dist_stand_raw"))
 
         '''Reading standardised seizure dissimilarity matrix'''
         DissM_FC_stand = sio.loadmat ( os.path.join (stand_path[0],  "DissMatFC_stand_{}.mat".format(id_patient) ) )['DissFC_stand']
