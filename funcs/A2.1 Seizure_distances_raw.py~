@@ -95,8 +95,10 @@ def process_file (in_path):
                     xx = Raw_Matrix[:, int ( seizures_all[i] )]
                     yy = Raw_Matrix[:, int ( seizures_all[j] )]
                     multi_euclidean_dist[i,j] = distance.euclidean(xx,yy)
+            # seizure_dist_all.update(dict_value)
             seizure_dist_mEucl.__setitem__( 'IMF{}'.format ( imf + 1 ), multi_euclidean_dist.copy () )
 
+        seizure_dist_mEucl['eucl_dist'] = seizure_dist_mEucl
         # Save the Seizure distance matrix as a mat file
         sio.savemat ( os.path.join ( out_subfolder, "seizure_dist_eucl_{}.mat".format ( id_patient ) ), seizure_dist_mEucl )
 
