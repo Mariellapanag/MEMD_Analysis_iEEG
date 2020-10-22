@@ -32,8 +32,6 @@ info_path = os.path.join ( "data", "info" )
 folder = os.path.basename(__file__) # This will be used to specify the name of the file that the output will be stored in the file results
 folder = folder.split(".py")[0]
 
-folder = "heatmap_seizure_stand"
-
 # Test for one file
 # in_path = files[0]
 

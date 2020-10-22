@@ -109,7 +109,7 @@ def parallel_process ():
     files = [os.path.join ( ROOT_DIR, input_path, folder ) for folder in folders]
 
     # Uncomment this line if you want to run the analysis for one patient
-    files = files[5:6]
+    # files = files[5:6]
 
     start_time = time.time ()
     # Parallel processing

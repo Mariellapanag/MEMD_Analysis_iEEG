@@ -25,7 +25,7 @@ The output of each python script by default will be saved in a folder named as
 the python script file running within the _**results**_ folder.
 
 ### Run for one patient or all at once
-In the python files used by the user, there is the choice of generating the results for 1 or more patients or
+In most of the python files used by the user, there is the choice of generating the results for 1 or more patients or
 for all patients using parallel programming.
 The exact lines of code appear in each python file the user can run are the following:
 
@@ -85,7 +85,7 @@ For running the chosen python scripts for **more than one subject**, for example
  to add the following line of code:
  
 ```python
-files = [files[i] for i in [2,3,4,5]]
+files = [files[i] for i in [1,2,3,4]]
 ```
 The final code chunk would look like this:
 
@@ -96,7 +96,7 @@ def parallel_process ():
     folders = os.listdir ( os.path.join ( ROOT_DIR, input_path ) )
     files = [os.path.join ( ROOT_DIR, input_path, folder ) for folder in folders]
 
-    files = [files[i] for i in [2,3,4,5]]
+    files = [files[i] for i in [1,2,3,4]]
 
     start_time = time.time ()
     # Test to make sure concurrent map is working
@@ -111,7 +111,9 @@ def parallel_process ():
     print ( "Processed {} files in {:.2f} seconds.".format ( processed, end_time - start_time ) )
 
 ```
-
+The above code chunk is not included in the following python scripts:
+ - `FDR_Mantel_test_raw.py`
+ 
 ## Main Figures
 Main Figures .......
 

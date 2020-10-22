@@ -32,7 +32,6 @@ info_path = os.path.join ( "data", "info" )
 folder = os.path.basename(__file__) # This will be used to specify the name of the file that the output will be stored in the file results
 folder = folder.split(".py")[0]
 
-folder = "mantel"
 # in_path = files[0]
 
 def process_file (in_path):
@@ -172,7 +171,7 @@ def parallel_process ():
     files = [os.path.join ( ROOT_DIR, input_path, folder ) for folder in folders]
     # files = [files[i] for i in [3,5,8,9,11,12, 13]]
     # test the code
-    files = files[5:6]
+    # files = files[5:6]
 
     start_time = time.time ()
     # Test to make sure concurrent map is working
