@@ -18,8 +18,7 @@ from funcs.Global_settings.results import *
 plt.style.use ( selected_style )
 mpl.rcParams.update ( rc )
 
-"""Heatmap 
-"""
+"""Heatmap """
 
 '''Define the input paths'''
 # Path contains all the results from the analysis
@@ -66,40 +65,37 @@ def process_file (in_path):
         mantel_p_path_list = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*Mantel_test_raw"))
         keywordFilter = ["FDR"]
         mantel_p_path = [sent for sent in mantel_p_path_list if not any(word in sent for word in keywordFilter)]
-        mantel_p_dist_eucl_all = sio.loadmat ( os.path.join (mantel_p_path, "mantel_p_dist_eucl_{}".format(id_patient) ) )
+        mantel_p_dist_eucl_all = sio.loadmat ( os.path.join (mantel_p_path[0], "mantel_p_dist_eucl_{}".format(id_patient) ) )
 
         '''Reading all Mantel q (after FDR)'''
         print('Reading all Mantel q')
         mantel_q_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*FDR_Mantel_test_raw"))
-        mantel_q_dist_eucl_all = sio.loadmat ( os.path.join (mantel_q_path,  "mantel_q_dist_eucl_allperm_{}".format(id_patient) ) )
+        mantel_q_dist_eucl_all = sio.loadmat ( os.path.join (mantel_q_path[0],  "mantel_q_dist_eucl_{}".format(id_patient) ) )
 
         print('Beginning plotting mantel results')
         print('seizures:{}'.format(n_seizures))
 
-        if n_permutations == 1:
+        '''Seizure distances for IMFs'''
+        fig_name = "Mantel_pvalues_dist_eucl_{}.{}".format (id_patient, "pdf" )
+        with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:
+            '''Heatmap of Mantel test for H'''
+            manteltest_p_tr = mantel_p_dist_eucl_all['pvalue'][0][0].copy ()
+            fig, ax = plt.subplots ()
+            x_axis_labels = np.arange ( 1, manteltest_p_tr.shape[1] + 1, 1 )
+            y_axis_labels = np.arange ( 1, manteltest_p_tr.shape[0] + 1, 1 )
+            formatter = tkr.ScalarFormatter(useMathText=True)
+            formatter.set_scientific(True)
+            formatter.set_powerlimits((-2, 2))
+            g = sns.heatmap (manteltest_p_tr, xticklabels=x_axis_labels,
+                             yticklabels=y_axis_labels, cbar_kws={"format": formatter})
+            g.set_xlabel ( "IMFs" )
+            g.set_ylabel ( "Mantel" )
+            plt.title ( 'Mantel test p values')
 
-            '''Seizure distances for IMFs'''
-            fig_name = "Mantel_pvalues_dist_eucl_{}.{}".format (id_patient, "pdf" )
-            with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:
-                for id_perm in range(0, n_permutations):
-                    '''Heatmap of Mantel test for H'''
-                    manteltest_p_tr = mantel_p_dist_eucl_all['perm{}'.format(id_perm)]['pvalue'][0][0].copy ()
-                    fig, ax = plt.subplots ()
-                    x_axis_labels = np.arange ( 1, manteltest_p_tr.shape[1] + 1, 1 )
-                    y_axis_labels = np.arange ( 1, manteltest_p_tr.shape[0] + 1, 1 )
-                    formatter = tkr.ScalarFormatter(useMathText=True)
-                    formatter.set_scientific(True)
-                    formatter.set_powerlimits((-2, 2))
-                    g = sns.heatmap (manteltest_p_tr, xticklabels=x_axis_labels,
-                                     yticklabels=y_axis_labels, cbar_kws={"format": formatter})
-                    g.set_xlabel ( "IMFs" )
-                    g.set_ylabel ( "Mantel" )
-                    plt.title ( 'Mantel test p\n perm{}'.format(id_perm))
-
-                    plt.tight_layout()
-                    canvas = FigureCanvasPdf(fig)
-                    canvas.print_figure(pages)
-                    plt.close("all")
+            plt.tight_layout()
+            canvas = FigureCanvasPdf(fig)
+            canvas.print_figure(pages)
+            plt.close("all")
 
             fig_name = "Mantel_qvalues_dist_eucl_{}.{}".format (id_patient, "pdf" )
             with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:

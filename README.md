@@ -3,12 +3,14 @@ MEMD_Analysis_iEEG
 ## Table of contents
 * [General info](#general-info)
 * [Setup](#setup)
-    +[Choose the name of the folder `results`](#results-folder)
-    +[Run for one patient or all at once](#choice-of-run)
+    + [Choose the name of the folder `results`](#results-folder)
+    + [Run for one patient or all at once](#choice-of-run)
 * [Main Figures](#main-figures)
     + [Seizure Dissimilarity and Distance Heatmaps](#dist-heatmaps)
     + [Seizure Dissimilarity and Distance Heatmaps (standardised)](#dist-stand-heatmaps)
     + [Scatterplots of seizure dissimilarity with seizure distances](#scatter-szDiss-szDist)
+* [Supporting Figures](#other-figures)
+    + [Mantel test figures](#mantel-test-fig)
 * [Setup](#setup)
 
 ## General info
@@ -140,5 +142,5 @@ The output of `Mantel_test_raw.py` would be the aforementioned scatterplots (one
 the spearman correlation values displayed in the title of the plots.
 Mantel test results are also generated, but not displayed in the scatterplots, as they will be used later on, in order to perform FDR to all patients.
 
-
+## Supporting Figures
 
