@@ -60,7 +60,8 @@ folder = os.path.basename(__file__) # This will be used to specify the name of t
 folder = folder.split(".py")[0]
 
 folders = os.listdir ( os.path.join ( ROOT_DIR, input_path ) )
-files = [glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*Mantel_test_raw")) for id_patient in folders]
+files = [glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*PSD_computation")) for id_patient in folders]
+
 
 def process_file ():
 
@@ -75,9 +76,9 @@ def process_file ():
         names = list()
         for file in files:
             # Extract path components
-            parts = Path ( file ).parts
+            parts = Path ( file[0][0] ).parts
 
-            id_patient = parts[-4]
+            id_patient = parts[-2]
 
             '''Seizure information for each patient'''
             # Read the seizure information for the corresponding patient
@@ -106,27 +107,28 @@ def process_file ():
 
                 '''Dominant Frequency'''
                 print("Reading dominant Frequency")
-                dom_freq = sio.loadmat(os.path.join(ROOT_DIR, output_path,folder, id_patient, subfolder, "dominant_Psdfreq_allIMFs_{}.mat".format(id_patient)))['dom_freq'].squeeze()
+                dom_freq_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*PSD_computation"))
+                dom_freq = sio.loadmat(os.path.join(dom_freq_path[0], "dominant_Psdfreq_allIMFs_{}.mat".format(id_patient)))['dom_freq'].squeeze()
 
-                '''Seizure distance all IMFs and DIMs'''
-                rows_imfs = np.where(mantel_q_dist_all <= pvalue)[0]
-
-                imfs = ["IMF{}".format(i+1) for i in np.unique(rows_imfs)]
-
-                ''' Read the Spearman correlation'''
-                # Import the file with the Beta coefficients
-                print ( "{} {}".format ( "Reading Spearman mat file", id_patient ) )
-                spearman_subj = spearman_dist_all.copy()
-                spearman_max = spearman_subj[np.unique(rows_imfs), :].max(axis=1)
-                spearman_df = pd.DataFrame({"IMF": imfs, "spearman": spearman_max})
-
-                '''Using Mantel test obtained from Distance of all IMFs and DIMs'''
-                df_display = pd.DataFrame({"IMF": imfs})
-                df_display['Patients'] = np.repeat(id_patient, df_display.shape[0])
-                df_display["id"] = ["{}_{}".format ( a, b ) for a, b in
-                                    zip ( df_display["Patients"], df_display["IMF"] )]
-
-                df_display1 = df_display.merge ( spearman_df, on=[ "IMF"], how='left' )
+                # '''Seizure distance all IMFs and DIMs'''
+                # rows_imfs = np.where(mantel_q_dist_all <= pvalue)[0]
+                # #
+                # imfs = ["IMF{}".format(i+1) for i in np.unique(rows_imfs)]
+                #
+                # ''' Read the Spearman correlation'''
+                # # Import the file with the Beta coefficients
+                # print ( "{} {}".format ( "Reading Spearman mat file", id_patient ) )
+                # spearman_subj = spearman_dist_all.copy()
+                # spearman_max = spearman_subj[np.unique(rows_imfs), :].max(axis=1)
+                # spearman_df = pd.DataFrame({"IMF": imfs, "spearman": spearman_max})
+                #
+                # '''Using Mantel test obtained from Distance of all IMFs and DIMs'''
+                # df_display = pd.DataFrame({"IMF": imfs})
+                # df_display['Patients'] = np.repeat(id_patient, df_display.shape[0])
+                # df_display["id"] = ["{}_{}".format ( a, b ) for a, b in
+                #                     zip ( df_display["Patients"], df_display["IMF"] )]
+                #
+                # df_display1 = df_display.merge ( spearman_df, on=[ "IMF"], how='left' )
 
                 Patients = np.repeat(id_patient, dom_freq.shape[0])
                 IMF = ["IMF{}".format(x) for x in range(1, dom_freq.shape[0]+1)]
@@ -134,7 +136,7 @@ def process_file ():
                 dom_freq_df["id"] = ["{}_{}".format ( a, b ) for a, b in
                                      zip ( dom_freq_df["Patients"], dom_freq_df["IMF"] )]
 
-                merge_list.append(df_display1.merge ( dom_freq_df, on=["id", "Patients", "IMF"], how='left' ))
+                # merge_list.append(df_display1.merge ( dom_freq_df, on=["id", "Patients", "IMF"], how='left' ))
 
                 '''Using Mantel test obtained from euclidean distance of IMFs across all Dimensions'''
                 eucl_rows_imfs = np.where(mantel_q_dist_eucl_all <= pvalue)[1]

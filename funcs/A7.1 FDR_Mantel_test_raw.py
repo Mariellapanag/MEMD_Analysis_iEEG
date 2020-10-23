@@ -27,7 +27,9 @@ folder = os.path.basename(__file__) # This will be used to specify the name of t
 folder = folder.split(".py")[0]
 
 folders = os.listdir ( os.path.join ( ROOT_DIR, input_path ) )
-files = [glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*Mantel_test_raw")) for id_patient in folders]
+files_list = [glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*Mantel_test_raw")) for id_patient in folders]
+keywordFilter = ["FDR"]
+files = [sent for sent in files_list if not any(word in sent for word in keywordFilter)]
 
 #file = file[0]
 def run_process():

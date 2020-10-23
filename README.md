@@ -153,7 +153,8 @@ The following graphical representations are available:
  - marginal Hilbert Spectrum of frequency of all components within IMF 
  - Hilbert-Huang spectrum for each IMF
 For generating these plots, once needs to run the following python scripts:
-
+ - `Hilbert_output.py`
+ - `PSD_computation.py`
 
 # <a name="other-figures"></a> Supporting figures
 Figures .....
