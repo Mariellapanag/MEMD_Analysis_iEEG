@@ -3,8 +3,8 @@ MEMD_Analysis_iEEG
 # Table of contents
 * [General info](#general-info)
 * [Setup](#setup)
-    * [Choose the name of the folder `results`](#setup-results-folder)
-    * [Run for one patient or all at once](#setup-choice-of-run)
+    * [Choose the name of the folder `results`](#results-folder)
+    * [Run for one patient or all at once](#choice-of-run)
 * [Main Figures](#main-figures)
     * [Seizure Dissimilarity and Distance Heatmaps](#dist-heatmaps)
     * [Seizure Dissimilarity and Distance Heatmaps (standardised)](#dist-stand-heatmaps)
@@ -13,11 +13,11 @@ MEMD_Analysis_iEEG
     * [Mantel test figures](#mantel-test-fig)
 
 
-# General info
+# <a name="general-info"></a> General info
 This project is ........
 
-# Setup
-## Choose the name of the folder `results`
+# <a name="setup"></a> Setup
+## <a name="results-folder"></a> Choose the name of the folder `results`
 After downloading the project from Github, you can start producing results and figures.
 Results will be stored in a folder results within the main directory folder of the project by default.
 However, the user can change the name of the folder by going to the python file `results.py`
@@ -26,7 +26,7 @@ which is located in the following path:
 The output of each python script by default will be saved in a folder named as 
 the python script file running within the _**results**_ folder.
 
-## Run for one patient or all at once
+## <a name="choice-of-run"></a> Run for one patient or all at once
 In most of the python files used by the user, there is the choice of generating the results for 1 or more patients or
 for all patients using parallel programming.
 The exact lines of code appear in each python file the user can run are the following:
@@ -116,18 +116,18 @@ def parallel_process ():
 The above code chunk is not included in the following python scripts:
  - `FDR_Mantel_test_raw.py`
  
-# Main Figures
+# <a name="main-figures"></a> Main Figures
 
 Main Figures .......
 
-## <a name="dist-heatmaps"></a>Seizure Dissimilarity and Distance Heatmaps
+## <a name="dist-heatmaps"></a> Seizure Dissimilarity and Distance Heatmaps
 
 In order to generate the heatmap plots of seizure dissimilarity and seizure IMF distances,
  you need to run the following python scripts:
  - `sz_dist_raw.py`
  - `Heatmaps_sz_dist_raw.py`
 
-## Seizure Dissimilarity and Distance Heatmaps (standardised)
+## <a name="dist-stand-heatmaps"></a> Seizure Dissimilarity and Distance Heatmaps (standardised)
 
 In order to generate the heatmap plots of standardised seizure dissimilarity and standardised seizure IMF distances,
  you need to run the following python scripts:
@@ -135,7 +135,7 @@ In order to generate the heatmap plots of standardised seizure dissimilarity and
  - `sz_dist_stand_raw.py`
  - `Heatmaps_sz_dist_stand_raw.py`
 
-## Scatterplots of seizure dissimilarity with seizure distances
+## <a name="scatter-szdiss-szdist"></a> Scatterplots of seizure dissimilarity with seizure distances
 
 In order to obtain the scatterplots between seizure dissimilarity and seizure IMF distance, 
 as well as the ones of seizure dissimilarity and seizure time distance, you will have to run the following python scripts:
@@ -146,7 +146,18 @@ The output of `Mantel_test_raw.py` would be the aforementioned scatterplots (one
 the spearman correlation values displayed in the title of the plots.
 Mantel test results are also generated, but not displayed in the scatterplots, as they will be used later on, in order to perform FDR to all patients.
 
-# Supporting figures
+# <a name="other-figures"></a> Supporting figures
+Figures .....
+add brief description of the figures included
+## <a name="mantel-test-fig"></a> Mantel test figures
+For generating figures for the Mantel test p-values, as well as the resulting q-values after applying the FDR correction, 
+the user should run the following python scripts:
+ - `sz_dist_raw.py`
+ - `Mantel_test_raw.py`
+ - `FDR_Mantel_test_raw.py`
+ - `Heatmap_Mantel_test_raw.py`
+Note that the first 3 python scripts (`sz_dist_raw.py`, `Mantel_test_raw.py`, `FDR_Mantel_test_raw.py`) should executed for all subjects; the code automatically generate the results 
+for subjects with #seizures > 5.
 
-dddd
 
+ 
