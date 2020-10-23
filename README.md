@@ -120,7 +120,7 @@ The above code chunk is not included in the following python scripts:
 
 Main Figures .......
 
-## Seizure Dissimilarity and Distance Heatmaps
+## <a name="dist-heatmaps"></a>Seizure Dissimilarity and Distance Heatmaps
 
 In order to generate the heatmap plots of seizure dissimilarity and seizure IMF distances,
  you need to run the following python scripts:
