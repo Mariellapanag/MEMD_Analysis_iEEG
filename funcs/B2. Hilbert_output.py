@@ -1,4 +1,5 @@
 from pathlib import Path
+import glob
 import time
 import scipy.io as sio
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -6,18 +7,17 @@ import numpy as np
 import os
 import pandas as pd
 
-from MEMD_funcs.FINAL_CODE.Hilbert_funcs import inst_features
-from MEMD_funcs.Global_settings.main import ROOT_DIR
-
+from paths import ROOT_DIR
+from funcs.Hilbert_functions.Hilbert_funcs import inst_features
+from funcs.Global_settings.results import *
 
 # Path specifying the input data of all patients
 input_path = os.path.join(ROOT_DIR, "data", "longterm_preproc")
 
-# Path for storing the results
-folder_results = "final_results"
+# Get the name of the current script
+folder = os.path.basename(__file__) # This will be used to specify the name of the file that the output will be stored in the file results
+folder = folder.split(".py")[0]
 
-# subsubfolder
-subsubfolder = "Initial_data(No permutation)"
 
 """Code for run and save Hilbert features 
 
@@ -51,21 +51,16 @@ def process_file(in_path):
     ----------
     """
 
-    #Define the output path
-    folder = "figures"
-    # folder = "figures_shuffled"
-
     # Extract path components
     parts = Path(in_path).parts
     id_patient = parts[-1]
 
     # Make output directory if needed
-    out_subfolder = os.path.join(ROOT_DIR, folder_results, folder, id_patient,  subsubfolder)
+    out_subfolder = os.path.join (ROOT_DIR, result_file, id_patient, folder)
     os.makedirs(out_subfolder, exist_ok = True)
     print ( "Processing file:", in_path )
 
-    '''NMF RESULTS - PLOTS'''
-
+    '''NMF RESULTS'''
     filename_nmf = "NMF_BP_CA_normedBand.mat"
     print ( "Processing file NMF:", filename_nmf)
     NMF_all = sio.loadmat(os.path.join(in_path, filename_nmf))
@@ -79,10 +74,8 @@ def process_file(in_path):
     # Import the file with the final MEMD and STEMD results
     print ( "{}{}".format ( "Reading MEMD mat file ", id_patient ) )
     filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand.mat"
-    #filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand_shuffled.mat"
     MEMD_all = sio.loadmat ( os.path.join(in_path, filename_memd ))
     IMF_MEMD = MEMD_all["imf_memd"]
-    # IMF_MEMD = MEMD_all["imf_perm_memd"]
 
     df_melt = df_H.melt ()
     [n_comp, n_imfs, n_time] = IMF_MEMD.shape
@@ -125,9 +118,9 @@ def process_file(in_path):
                 'phase_angle': phase_angle, 'power': power, 'time': time, 'n_comp': n_comp, 'n_imfs': n_imfs, 'n_time': n_time}
     sio.savemat(os.path.join(out_subfolder, "hilbert_output.mat"), hilb_res)
 
-    # a = sio.loadmat(os.path.join(path_results, "hilbert_output.mat"))
+    # a = sio.loadmat(os.path.join(out_subfolder, "hilbert_output.mat"))
 
-def parallel_process(input_path):
+def parallel_process():
 
     """
     The code is making use of parallel processing in order to provide the aforementioned results for all patients.
@@ -144,7 +137,7 @@ def parallel_process(input_path):
 
     # run the code for one or a selection of patients; just uncomment the following command and specify the index
     # that corresponds to the exact patient willing to run the code
-    # files = files[15:16]
+    files = files[5:6]
 
     start_time = time.time ()
     # Test to make sure concurrent map is working
@@ -160,7 +153,4 @@ def parallel_process(input_path):
 
 
 if __name__ == "__main__":
-    '''Define the input paths'''
-    # Path contains all the results from the analysis
-    input_path = os.path.join ( "data", "longterm_preproc" )
-    parallel_process(input_path)
+    parallel_process()

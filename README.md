@@ -3,12 +3,13 @@ MEMD_Analysis_iEEG
 # Table of contents
 * [General info](#general-info)
 * [Setup](#setup)
-    * [Choose the name of the folder `results`](#results-folder)
+    * [Choose the name of the folder _results_](#results-folder)
     * [Run for one patient or all at once](#choice-of-run)
 * [Main Figures](#main-figures)
     * [Seizure Dissimilarity and Distance Heatmaps](#dist-heatmaps)
     * [Seizure Dissimilarity and Distance Heatmaps (standardised)](#dist-stand-heatmaps)
     * [Scatterplots of seizure dissimilarity with seizure distances](#scatter-szdiss-szdist)
+    * [Marginal Hilbert Spectrum](#marginal-hilbert)
 * [Supporting figures](#other-figures)
     * [Mantel test figures](#mantel-test-fig)
 
@@ -17,7 +18,7 @@ MEMD_Analysis_iEEG
 This project is ........
 
 # <a name="setup"></a> Setup
-## <a name="results-folder"></a> Choose the name of the folder `results`
+## <a name="results-folder"></a> Choose the name of the folder _results_
 After downloading the project from Github, you can start producing results and figures.
 Results will be stored in a folder results within the main directory folder of the project by default.
 However, the user can change the name of the folder by going to the python file `results.py`
@@ -145,6 +146,14 @@ as well as the ones of seizure dissimilarity and seizure time distance, you will
 The output of `Mantel_test_raw.py` would be the aforementioned scatterplots (one for the time distance and multiple ones for all IMFs), along with
 the spearman correlation values displayed in the title of the plots.
 Mantel test results are also generated, but not displayed in the scatterplots, as they will be used later on, in order to perform FDR to all patients.
+
+## <a name="marginal-hilbert"></a> Marginal Hilbert Spectrum
+The following graphical representations are available:
+ - marginal Hilbert Spectrum of frequency of all analytical IMF signals across components
+ - marginal Hilbert Spectrum of frequency of all components within IMF 
+ - Hilbert-Huang spectrum for each IMF
+For generating these plots, once needs to run the following python scripts:
+
 
 # <a name="other-figures"></a> Supporting figures
 Figures .....
