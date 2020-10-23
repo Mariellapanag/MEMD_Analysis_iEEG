@@ -1,4 +1,5 @@
 from pathlib import Path
+import glob
 import time
 import os
 import scipy.io as sio
@@ -10,12 +11,12 @@ import numpy as np
 from scipy import stats
 from matplotlib.backends.backend_pdf import FigureCanvasPdf, PdfPages
 
-from MEMD_funcs.Global_settings.global_settings_plots import *
-from MEMD_funcs.Global_settings.main import ROOT_DIR
+from paths import ROOT_DIR
+from funcs.Global_settings.global_settings_plots import *
+from funcs.Global_settings.results import *
 
 plt.style.use ( selected_style )
 mpl.rcParams.update ( rc )
-#plt.rcParams['agg.path.chunksize'] = 20000
 
 '''Define the input paths'''
 # Path contains all the results from the analysis
@@ -23,16 +24,7 @@ input_path = os.path.join("data", "longterm_preproc")
 # Path contains the seizure information
 info_path = os.path.join("data", "info")
 
-'''Define the output path'''
-# Path for storing the results
-folder_results = "final_results"
-
-# subsubfolder
-subsubfolder = "Initial_data(No permutation)"
-
 # in_path = files[0]
-
-
 
 def process_file(in_path):
     """Weighted power - frequency computation for all IMF*DIM

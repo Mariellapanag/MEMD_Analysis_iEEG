@@ -6,9 +6,18 @@ import numpy as np
 import os
 import pandas as pd
 
-from MEMD_funcs.Hilbert_functions.Hilbert_funcs import inst_features
+from MEMD_funcs.FINAL_CODE.Hilbert_funcs import inst_features
 from MEMD_funcs.Global_settings.main import ROOT_DIR
 
+
+# Path specifying the input data of all patients
+input_path = os.path.join(ROOT_DIR, "data", "longterm_preproc")
+
+# Path for storing the results
+folder_results = "final_results"
+
+# subsubfolder
+subsubfolder = "Initial_data(No permutation)"
 
 """Code for run and save Hilbert features 
 
@@ -18,7 +27,7 @@ amplitude and phase for a subject.
 The code is made use of parallel processing in order to provide the aforementioned results for all patients.
 
     * The results are written as .mat file named hilbert_output.mat 
-    * and it is stored in results_dir/ID**/Hilbert_output
+    * and it is stored in results_dir/ID**/data_proc
 """
 
 # in_path = files[0]
@@ -43,38 +52,37 @@ def process_file(in_path):
     """
 
     #Define the output path
-    output_path = os.path.join ( "results" )
-    # folder = "figures"
-    folder = "figures_shuffled"
+    folder = "figures"
+    # folder = "figures_shuffled"
 
     # Extract path components
     parts = Path(in_path).parts
-    subfolder = parts[-1]
+    id_patient = parts[-1]
 
     # Make output directory if needed
-    out_subfolder = os.path.join(ROOT_DIR, output_path, folder, subfolder)
+    out_subfolder = os.path.join(ROOT_DIR, folder_results, folder, id_patient,  subsubfolder)
     os.makedirs(out_subfolder, exist_ok = True)
     print ( "Processing file:", in_path )
 
     '''NMF RESULTS - PLOTS'''
+
     filename_nmf = "NMF_BP_CA_normedBand.mat"
+    print ( "Processing file NMF:", filename_nmf)
     NMF_all = sio.loadmat(os.path.join(in_path, filename_nmf))
     H = NMF_all["H"]
     W = NMF_all["W"]
-
-
     n_comp, n_time = H.shape
     # Convert the H matrix into dataframe
     df_H = pd.DataFrame ( H.T, columns=['Comp' + str ( i ) for i in range ( 1, n_comp + 1)] )
 
     '''MEMD RESULTS - PLOTS'''
     # Import the file with the final MEMD and STEMD results
-    print ( "{}{}".format ( "Reading MEMD mat file ", subfolder ) )
-    # filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand.mat"
-    filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand_shuffled.mat"
+    print ( "{}{}".format ( "Reading MEMD mat file ", id_patient ) )
+    filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand.mat"
+    #filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand_shuffled.mat"
     MEMD_all = sio.loadmat ( os.path.join(in_path, filename_memd ))
-    # IMF_MEMD = MEMD_all["imf_memd"]
-    IMF_MEMD = MEMD_all["imf_perm_memd"]
+    IMF_MEMD = MEMD_all["imf_memd"]
+    # IMF_MEMD = MEMD_all["imf_perm_memd"]
 
     df_melt = df_H.melt ()
     [n_comp, n_imfs, n_time] = IMF_MEMD.shape
@@ -92,7 +100,7 @@ def process_file(in_path):
     df_imf.columns = ["value", "time", "Type", "Components"]
 
     '''HUANG - HILBERT SPECTRUM'''
-    print ( "{}{}".format ( "Compute the instantaneous frequency, amplitude and phase ", subfolder ) )
+    print ( "{}{}".format ( "Compute the instantaneous frequency, amplitude and phase ", id_patient ) )
     # Create the 3D matrices of instantaneous frequency, amplitude and phase in order to save the corresponding results
     frequency = np.zeros ( (n_comp, n_imfs, n_time - 1), dtype=float )
     amplitude = np.zeros ( (n_comp, n_imfs, n_time - 1), dtype=float )
@@ -110,14 +118,12 @@ def process_file(in_path):
         phase_angle[:, i, :] = np.array ( [inst_features ( IMF_MEMD[c, i, :], fs )[4] for c in range ( 0, n_comp )] )
     # Compute the power of the signals
     power = np.power ( amplitude, 2 )
+    # time in days
     time = (np.arange ( 1, n_time ) * 30 / 3600) / 24
-
-    path_results = os.path.join(out_subfolder, "Hilbert_output")
-    os.makedirs(path_results, exist_ok = True)
 
     hilb_res = {'frequency': frequency, 'amplitude': amplitude, 'phase': phase, 'phase_wrap': phase_wrap,
                 'phase_angle': phase_angle, 'power': power, 'time': time, 'n_comp': n_comp, 'n_imfs': n_imfs, 'n_time': n_time}
-    sio.savemat(os.path.join(path_results, "hilbert_output.mat"), hilb_res)
+    sio.savemat(os.path.join(out_subfolder, "hilbert_output.mat"), hilb_res)
 
     # a = sio.loadmat(os.path.join(path_results, "hilbert_output.mat"))
 
@@ -133,10 +139,13 @@ def parallel_process(input_path):
     """
     processed = 0
 
-    folders = os.listdir(os.path.join(ROOT_DIR,input_path))
+    folders = os.listdir(os.path.join(ROOT_DIR, input_path))
     files = [os.path.join(ROOT_DIR, input_path, folder) for folder in folders]
-    # test the code
-    files = files[15:16]
+
+    # run the code for one or a selection of patients; just uncomment the following command and specify the index
+    # that corresponds to the exact patient willing to run the code
+    # files = files[15:16]
+
     start_time = time.time ()
     # Test to make sure concurrent map is working
     with ProcessPoolExecutor ( max_workers=4 ) as executor:
