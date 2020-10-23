@@ -1,6 +1,6 @@
 MEMD_Analysis_iEEG
 
-## Table of contents
+# Table of contents
 * [General info](#general-info)
 * [Setup](#setup)
     * [Choose the name of the folder `results`](#setup-results-folder)
@@ -9,7 +9,7 @@ MEMD_Analysis_iEEG
     * [Seizure Dissimilarity and Distance Heatmaps](#dist-heatmaps)
     * [Seizure Dissimilarity and Distance Heatmaps (standardised)](#dist-stand-heatmaps)
     * [Scatterplots of seizure dissimilarity with seizure distances](#scatter-szdiss-szdist)
-* [Supporting Figures](#other-figures)
+* [Supporting figures](#other-figures)
     * [Mantel test figures](#mantel-test-fig)
 
 
@@ -117,15 +117,18 @@ The above code chunk is not included in the following python scripts:
  - `FDR_Mantel_test_raw.py`
  
 # Main Figures
+
 Main Figures .......
 
 ## Seizure Dissimilarity and Distance Heatmaps
+
 In order to generate the heatmap plots of seizure dissimilarity and seizure IMF distances,
  you need to run the following python scripts:
  - `sz_dist_raw.py`
  - `Heatmaps_sz_dist_raw.py`
 
 ## Seizure Dissimilarity and Distance Heatmaps (standardised)
+
 In order to generate the heatmap plots of standardised seizure dissimilarity and standardised seizure IMF distances,
  you need to run the following python scripts:
  - `sz_dist_raw.py`
@@ -133,6 +136,7 @@ In order to generate the heatmap plots of standardised seizure dissimilarity and
  - `Heatmaps_sz_dist_stand_raw.py`
 
 ## Scatterplots of seizure dissimilarity with seizure distances
+
 In order to obtain the scatterplots between seizure dissimilarity and seizure IMF distance, 
 as well as the ones of seizure dissimilarity and seizure time distance, you will have to run the following python scripts:
  - `sz_dist_raw.py`
@@ -142,5 +146,7 @@ The output of `Mantel_test_raw.py` would be the aforementioned scatterplots (one
 the spearman correlation values displayed in the title of the plots.
 Mantel test results are also generated, but not displayed in the scatterplots, as they will be used later on, in order to perform FDR to all patients.
 
-# Supporting Figures
+# Supporting figures
+
+dddd
 
