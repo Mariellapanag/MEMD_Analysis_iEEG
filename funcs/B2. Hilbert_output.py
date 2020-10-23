@@ -18,7 +18,7 @@ input_path = os.path.join(ROOT_DIR, "data", "longterm_preproc")
 folder = os.path.basename(__file__) # This will be used to specify the name of the file that the output will be stored in the file results
 folder = folder.split(".py")[0]
 
-
+folder = "hilbert"
 """Code for run and save Hilbert features 
 
 This script allows the user to run the Hilbert function in order to obtain instantaneous frequency, 
@@ -137,7 +137,7 @@ def parallel_process():
 
     # run the code for one or a selection of patients; just uncomment the following command and specify the index
     # that corresponds to the exact patient willing to run the code
-    files = files[5:6]
+    files = files[15:16]
 
     start_time = time.time ()
     # Test to make sure concurrent map is working

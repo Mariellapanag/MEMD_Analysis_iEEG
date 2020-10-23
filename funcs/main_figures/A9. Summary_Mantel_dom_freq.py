@@ -65,7 +65,7 @@ files = [glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*PSD_computa
 
 def process_file ():
 
-    pvalues = [0.001, 0.05, 0.01]
+    pvalues = [0.05, 0.01, 0.001]
 
     pvalues_dict = {}
     eucl_pvalues_dict = {}
@@ -76,7 +76,7 @@ def process_file ():
         names = list()
         for file in files:
             # Extract path components
-            parts = Path ( file[0][0] ).parts
+            parts = Path ( file[0] ).parts
 
             id_patient = parts[-2]
 
@@ -92,6 +92,10 @@ def process_file ():
             n_seizures = len(seizures_all)
 
             if (n_seizures > 5):
+
+                out_subfolder = os.path.join (ROOT_DIR, result_file, id_patient, folder)
+                os.makedirs ( out_subfolder, exist_ok=True )
+
                 names.append(id_patient)
                 '''Reading all Mantel q (after FDR)'''
                 print('Reading all Mantel q')
@@ -114,15 +118,16 @@ def process_file ():
                 # rows_imfs = np.where(mantel_q_dist_all <= pvalue)[0]
                 # #
                 # imfs = ["IMF{}".format(i+1) for i in np.unique(rows_imfs)]
-                #
-                # ''' Read the Spearman correlation'''
-                # # Import the file with the Beta coefficients
+
+                ''' Read the Spearman correlation'''
+                # Import the file with the Beta coefficients
                 # print ( "{} {}".format ( "Reading Spearman mat file", id_patient ) )
                 # spearman_subj = spearman_dist_all.copy()
                 # spearman_max = spearman_subj[np.unique(rows_imfs), :].max(axis=1)
                 # spearman_df = pd.DataFrame({"IMF": imfs, "spearman": spearman_max})
-                #
-                # '''Using Mantel test obtained from Distance of all IMFs and DIMs'''
+
+                '''Using Mantel test obtained from Distance of all IMFs and DIMs'''
+
                 # df_display = pd.DataFrame({"IMF": imfs})
                 # df_display['Patients'] = np.repeat(id_patient, df_display.shape[0])
                 # df_display["id"] = ["{}_{}".format ( a, b ) for a, b in
@@ -152,18 +157,18 @@ def process_file ():
                 eucl_df_display1 = eucl_df_display.merge ( eucl_spearman_df, on=[ "IMF"], how='left' )
                 eucl_merge_list.append(eucl_df_display1.merge ( dom_freq_df, on=["id", "Patients", "IMF"], how='left' ))
 
-                dfs = [df.set_index ( 'id' ) for df in merge_list]
-                display_all = pd.concat ( dfs, axis=0 , sort = True)
-                patient_names = np.unique(display_all['Patients'])
-                add_names = [x for x in names if x not in patient_names]
-                df_add = pd.DataFrame({"IMF": np.repeat("IMF", len(add_names)),
-                                       "Patients": add_names, "dom_freq": np.repeat(np.nan, len(add_names)), "spearman": np.repeat(np.nan, len(add_names))})
+                # dfs = [df.set_index ( 'id' ) for df in merge_list]
+                # display_all = pd.concat ( dfs, axis=0 , sort = True)
+                # patient_names = np.unique(display_all['Patients'])
+                # add_names = [x for x in names if x not in patient_names]
+                # df_add = pd.DataFrame({"IMF": np.repeat("IMF", len(add_names)),
+                #                        "Patients": add_names, "dom_freq": np.repeat(np.nan, len(add_names)), "spearman": np.repeat(np.nan, len(add_names))})
+                #
+                # display_all = display_all.append(df_add)
+                # display_all["idx"] = [x.split("ID")[1] for x in display_all['Patients']]
+                # display_all.sort_values(by = ['idx'], inplace = True)
 
-                display_all = display_all.append(df_add)
-                display_all["idx"] = [x.split("ID")[1] for x in display_all['Patients']]
-                display_all.sort_values(by = ['idx'], inplace = True)
-
-                pvalues_dict.__setitem__('pvalue{}'.format(pvalue), display_all)
+                # pvalues_dict.__setitem__('pvalue{}'.format(pvalue), display_all)
 
                 '''Euclidean distance '''
                 eucl_dfs = [df.set_index ( 'id' ) for df in eucl_merge_list]
@@ -181,28 +186,28 @@ def process_file ():
 
             fs_limit = 2880 / 2
             binsfreq = np.logspace ( -3,  np.log10 ( fs_limit ), 800, endpoint=True )
-            fig_name = "Summary_Mantel_domFreq_dist_all.{}".format ("pdf" )
-            with PdfPages(os.path.join(out_figure, fig_name)) as pages:
-                for pvalue in pvalues:
-
-                    fig, ax = plt.subplots ()
-                    plt.scatter( x="Patients", y="dom_freq", c="spearman", cmap="RdBu",
-                                  data = pvalues_dict['pvalue{}'.format(pvalue)], vmin = -1, vmax = 1)
-                                 #norm=mpl.colors.LogNorm())
-                    plt.xlabel('Patients')
-                    plt.ylabel('Dominant Frequency')
-                    plt.colorbar(label = "Spearman")
-                    plt.yscale ( "log" )
-                    plt.ylim(binsfreq.min(), binsfreq.max()+200)
-                    plt.title("pvalue: {}".format(pvalue))
-                    plt.tight_layout()
-                    canvas = FigureCanvasPdf(fig)
-                    canvas.print_figure(pages)
-                    plt.close("all")
+            # fig_name = "Summary_Mantel_domFreq_dist_all.{}".format ("pdf" )
+            # with PdfPages(os.path.join(out_figure, fig_name)) as pages:
+            #     for pvalue in pvalues:
+            #
+            #         fig, ax = plt.subplots ()
+            #         plt.scatter( x="Patients", y="dom_freq", c="spearman", cmap="RdBu",
+            #                       data = pvalues_dict['pvalue{}'.format(pvalue)], vmin = -1, vmax = 1)
+            #                      #norm=mpl.colors.LogNorm())
+            #         plt.xlabel('Patients')
+            #         plt.ylabel('Dominant Frequency')
+            #         plt.colorbar(label = "Spearman")
+            #         plt.yscale ( "log" )
+            #         plt.ylim(binsfreq.min(), binsfreq.max()+200)
+            #         plt.title("pvalue: {}".format(pvalue))
+            #         plt.tight_layout()
+            #         canvas = FigureCanvasPdf(fig)
+            #         canvas.print_figure(pages)
+            #         plt.close("all")
 
 
             fig_name = "Summary_Mantel_domFreq_dist_eucl.{}".format ( "pdf" )
-            with PdfPages(os.path.join(out_figure, fig_name)) as pages:
+            with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:
                 for pvalue in pvalues:
 
                     fig, ax = plt.subplots ()

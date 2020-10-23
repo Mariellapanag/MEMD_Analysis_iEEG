@@ -12,6 +12,7 @@ MEMD_Analysis_iEEG
     * [Marginal Hilbert Spectrum](#marginal-hilbert)
 * [Supporting figures](#other-figures)
     * [Mantel test figures](#mantel-test-fig)
+    * [Summary plot combining Mantel test and Dominant Frequency](#mantel-dom-freq)
 
 
 # <a name="general-info"></a> General info
@@ -159,6 +160,7 @@ For generating these plots, once needs to run the following python scripts:
 # <a name="other-figures"></a> Supporting figures
 Figures .....
 add brief description of the figures included
+
 ## <a name="mantel-test-fig"></a> Mantel test figures
 For generating figures for the Mantel test p-values, as well as the resulting q-values after applying the FDR correction, 
 the user should run the following python scripts:
@@ -169,5 +171,6 @@ the user should run the following python scripts:
 Note that the first 3 python scripts (`sz_dist_raw.py`, `Mantel_test_raw.py`, `FDR_Mantel_test_raw.py`) should executed for all subjects; the code automatically generate the results 
 for subjects with #seizures > 5.
 
-
+## <a name="mantel-dom-freq"></a> Summary plot combining Mantel test and Dominant Frequency
+ - ``
  

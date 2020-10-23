@@ -256,7 +256,7 @@ def parallel_process():
     files = [os.path.join(ROOT_DIR, input_path, folder) for folder in folders]
 
     # test the code
-    files = files[5:6]
+    # files = files[5:6]
 
     start_time = time.time ()
     # Test to make sure concurrent map is working
