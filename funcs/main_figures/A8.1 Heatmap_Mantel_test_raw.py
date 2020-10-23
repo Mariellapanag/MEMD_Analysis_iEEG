@@ -1,4 +1,5 @@
 from pathlib import Path
+import glob
 import time
 import scipy.io as sio
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -10,14 +11,14 @@ from matplotlib.backends.backend_pdf import FigureCanvasPdf, PdfPages
 import matplotlib.ticker as tkr
 import seaborn as sns
 
-from MEMD_funcs.Global_settings.main import ROOT_DIR
-from MEMD_funcs.Global_settings.global_settings_plots import *
+from paths import ROOT_DIR
+from funcs.Global_settings.global_settings_plots import *
+from funcs.Global_settings.results import *
 
 plt.style.use ( selected_style )
 mpl.rcParams.update ( rc )
 
-"""Compute the seizure distance based on either the initial seizure timings or the shuffled ones using each IMF and Dimension for all patients
-Save the results. Implement Mantel test and save the results as well. 
+"""Heatmap 
 """
 
 '''Define the input paths'''
@@ -26,31 +27,11 @@ input_path = os.path.join ( "data", "longterm_preproc" )
 # Path contains the seizure information
 info_path = os.path.join ( "data", "info" )
 
-'''Define the output path'''
-output_path = os.path.join ( "final_results" )
-folder = "figures"
+# Get the name of the current script
+folder = os.path.basename(__file__) # This will be used to specify the name of the file that the output will be stored in the file results
+folder = folder.split(".py")[0]
 
-'''Define the output subfolder name'''
-subfolder = "Initial_data(No permutation)"
-
-out_subfolder_name = 'seizure_dist_Raw_Analysis'
-
-'''Choose run name from the following: 'initial', 'shuffle_total_random', 'shuffle_seizure_random', 'shuffle_seizure_slice' '''
-RUN_NAME = 'initial'
-
-selected_number = 50
-
-if RUN_NAME == 'initial':
-    sub_name = 'Initial_data'
-elif RUN_NAME == 'shuffle_total_random':
-    sub_name = 'shuffle_randomly_{}'.format(selected_number)
-elif RUN_NAME == 'shuffle_seizure_random':
-    sub_name = 'shuffle_seizure_times_{}'.format(selected_number)
-elif RUN_NAME == 'shuffle_seizure_slice':
-    sub_name = 'shuffle_seizure_vector_{}'.format(selected_number)
-else:
-    print('Please choose one of the available options for the parameter RUN_NAME')
-
+folder = "heatmap_mantel"
 # in_path = files[0]
 
 
@@ -62,29 +43,35 @@ def process_file (in_path):
     # folder = "figures_shuffled"
     id_patient = parts[-1]
 
-    # Ouput directory for data-results
-    out_subfolder = os.path.join (ROOT_DIR, output_path, folder, id_patient, subfolder, sub_name,  out_subfolder_name)
+    # Output directory for data-results
+    out_subfolder = os.path.join (ROOT_DIR, result_file, id_patient, folder)
     os.makedirs ( out_subfolder, exist_ok=True )
     print ( "Processing file:", in_path )
 
-
     '''Seizure information for each patient'''
     # Read the seizure information for the corresponding patient
-    print('Reading Seizure Timings')
-    seizures_file = sio.loadmat ( os.path.join (ROOT_DIR, output_path, folder, id_patient, subfolder, sub_name,  "seizure_all_{}".format(id_patient) ) )
-    # seizures_all = seizures_file["seizures"]
-    n_seizures = seizures_file["n_seizures"][0][0]
-    n_permutations = seizures_file["n_permutations"][0][0]
+    print('Reading seizure information')
+    filename_info = "{}_{}".format ( id_patient, "info.mat" )
+    info_all = sio.loadmat ( os.path.join ( ROOT_DIR, info_path, filename_info ) )
+    info_seizure = info_all["seizure_begin"]
+    ## Investigating the seizure events
+    info_seizure = np.floor ( info_seizure / 30 )
+    seizures_all = [int ( x ) for x in info_seizure]
+    n_seizures = len(seizures_all)
 
     if (n_seizures > 5):
 
         '''Reading all Mantel p'''
         print('Reading all Mantel p')
-        mantel_p_dist_eucl_all = sio.loadmat ( os.path.join (out_subfolder,  "mantel_p_dist_eucl_allperm_{}".format(id_patient) ) )
+        mantel_p_path_list = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*Mantel_test_raw"))
+        keywordFilter = ["FDR"]
+        mantel_p_path = [sent for sent in mantel_p_path_list if not any(word in sent for word in keywordFilter)]
+        mantel_p_dist_eucl_all = sio.loadmat ( os.path.join (mantel_p_path, "mantel_p_dist_eucl_{}".format(id_patient) ) )
 
         '''Reading all Mantel q (after FDR)'''
         print('Reading all Mantel q')
-        mantel_q_dist_eucl_all = sio.loadmat ( os.path.join (out_subfolder,  "mantel_q_dist_eucl_allperm_{}".format(id_patient) ) )
+        mantel_q_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*FDR_Mantel_test_raw"))
+        mantel_q_dist_eucl_all = sio.loadmat ( os.path.join (mantel_q_path,  "mantel_q_dist_eucl_allperm_{}".format(id_patient) ) )
 
         print('Beginning plotting mantel results')
         print('seizures:{}'.format(n_seizures))
