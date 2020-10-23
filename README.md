@@ -3,8 +3,8 @@ MEMD_Analysis_iEEG
 ## Table of contents
 * [General info](#general-info)
 * [Setup](#setup)
-    + [Choose the name of the folder `results`](#results-folder)
-    + [Run for one patient or all at once](#choice-of-run)
+    * [Choose the name of the folder `results`](#results-folder)
+    * [Run for one patient or all at once](#choice-of-run)
 * [Main Figures](#main-figures)
     + [Seizure Dissimilarity and Distance Heatmaps](#dist-heatmaps)
     + [Seizure Dissimilarity and Distance Heatmaps (standardised)](#dist-stand-heatmaps)
