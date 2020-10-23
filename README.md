@@ -1,15 +1,15 @@
 MEMD_Analysis_iEEG
 
 ## Table of contents
-- [General info](#general-info)
-- [Setup](#setup)
+* [General info](#general-info)
+* [Setup](#setup)
     * [Choose the name of the folder `results`](#setup-results-folder)
     * [Run for one patient or all at once](#setup-choice-of-run)
-- [Main Figures](#main-figures)
+* [Main Figures](#main-figures)
     * [Seizure Dissimilarity and Distance Heatmaps](#dist-heatmaps)
     * [Seizure Dissimilarity and Distance Heatmaps (standardised)](#dist-stand-heatmaps)
     * [Scatterplots of seizure dissimilarity with seizure distances](#scatter-szDiss-szDist)
-- [Supporting Figures](#other-figures)
+* [Supporting Figures](#other-figures)
     * [Mantel test figures](#mantel-test-fig)
 
 
