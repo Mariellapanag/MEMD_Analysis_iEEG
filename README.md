@@ -8,7 +8,7 @@ MEMD_Analysis_iEEG
 * [Main Figures](#main-figures)
     * [Seizure Dissimilarity and Distance Heatmaps](#dist-heatmaps)
     * [Seizure Dissimilarity and Distance Heatmaps (standardised)](#dist-stand-heatmaps)
-    * [Scatterplots of seizure dissimilarity with seizure distances](#scatter-szDiss-szDist)
+    * [Scatterplots of seizure dissimilarity with seizure distances](#scatter-szdiss-szdist)
 * [Supporting Figures](#other-figures)
     * [Mantel test figures](#mantel-test-fig)
 
