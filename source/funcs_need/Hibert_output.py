@@ -18,13 +18,12 @@ input_path = os.path.join(ROOT_DIR, "data", "longterm_preproc")
 folder = os.path.basename(__file__) # This will be used to specify the name of the file that the output will be stored in the file results
 folder = folder.split(".py")[0]
 
-folder = "hilbert"
 """Code for run and save Hilbert features 
 This script allows the user to run the Hilbert function in order to obtain instantaneous frequency, 
 amplitude and phase for a subject.
 The code is made use of parallel processing in order to provide the aforementioned results for all patients.
     * The results are written as .mat file named hilbert_output.mat 
-    * and it is stored in results_dir/ID**/data_proc
+    * and it is stored in results_dir/ID**/Hilbert_output
 """
 
 # in_path = files[0]
@@ -64,7 +63,7 @@ def process_file(in_path):
     # Convert the H matrix into dataframe
     df_H = pd.DataFrame ( H.T, columns=['Comp' + str ( i ) for i in range ( 1, n_comp + 1)] )
 
-    '''MEMD RESULTS - PLOTS'''
+    '''MEMD RESULTS'''
     # Import the file with the final MEMD and STEMD results
     print ( "{}{}".format ( "Reading MEMD mat file ", id_patient ) )
     filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand.mat"
@@ -73,8 +72,7 @@ def process_file(in_path):
 
     df_melt = df_H.melt ()
     [n_comp, n_imfs, n_time] = IMF_MEMD.shape
-    # Make a DataFrame with all the information about the IMFs and Components
-    # This is for visualization purposes - It is convenient to use the function FacetGrid()
+    # Make a DataFrame with all the information regarding all IMFs and Components
     df_imf = pd.DataFrame ()
     for imf in range ( 0, n_imfs ):
         for c in range ( 0, n_comp ):
@@ -86,7 +84,7 @@ def process_file(in_path):
             df_imf = df_imf.append ( df_display )
     df_imf.columns = ["value", "time", "Type", "Components"]
 
-    '''HUANG - HILBERT SPECTRUM'''
+    '''HILBERT TRANSFORM'''
     print ( "{}{}".format ( "Compute the instantaneous frequency, amplitude and phase ", id_patient ) )
     # Create the 3D matrices of instantaneous frequency, amplitude and phase in order to save the corresponding results
     frequency = np.zeros ( (n_comp, n_imfs, n_time - 1), dtype=float )
@@ -112,16 +110,10 @@ def process_file(in_path):
                 'phase_angle': phase_angle, 'power': power, 'time': time, 'n_comp': n_comp, 'n_imfs': n_imfs, 'n_time': n_time}
     sio.savemat(os.path.join(out_subfolder, "hilbert_output.mat"), hilb_res)
 
-    # a = sio.loadmat(os.path.join(out_subfolder, "hilbert_output.mat"))
-
 def parallel_process():
 
     """
     The code is making use of parallel processing in order to provide the aforementioned results for all patients.
-    Parameters
-    ----------
-    input_path : os path
-        Path of the input data.
     """
     processed = 0
 
@@ -130,7 +122,7 @@ def parallel_process():
 
     # run the code for one or a selection of patients; just uncomment the following command and specify the index
     # that corresponds to the exact patient willing to run the code
-    files = files[15:16]
+    # files = files[15:16]
 
     start_time = time.time ()
     # Test to make sure concurrent map is working
