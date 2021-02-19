@@ -32,7 +32,6 @@ folder = folder.split(".py")[0]
 
 # in_path = files[0]
 
-
 def process_file (in_path):
 
     # Extract path components

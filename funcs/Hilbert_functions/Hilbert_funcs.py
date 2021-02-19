@@ -38,8 +38,6 @@ def inst_features(signal, fs ):
     References
     ----------
     1. `Example from Scipy where the Hilbert transform is applied to determine the amplitude envelope and instantaneous frequency of an amplitude-modulated signal <https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.hilbert.html>`_.
-
-    2.
     """
 
     # Compute the hilbert transform

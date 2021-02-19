@@ -126,18 +126,18 @@ Main Figures .......
 
 In order to generate the heatmap plots of seizure dissimilarity and seizure IMF distances,
  you need to run the following python scripts:
- - `sz_dist_raw.py`
- - `Heatmaps_sz_dist_raw.py`
+ - `sz_diss_dist_raw.py`
+ - `Heatmaps_sz_diss_dist_raw.py`
 
 ## <a name="dist-stand-heatmaps"></a> Seizure Dissimilarity and Distance Heatmaps (standardised)
 
 In order to generate the heatmap plots of standardised seizure dissimilarity and standardised seizure IMF distances,
  you need to run the following python scripts:
  - `sz_dist_raw.py`
- - `sz_dist_stand_raw.py`
- - `Heatmaps_sz_dist_stand_raw.py`
+ - `sz_diss_dist_stand_raw.py`
+ - `Heatmaps_sz_diss_dist_stand_raw.py`
 
-## <a name="scatter-szdiss-szdist"></a> Scatterplots of seizure dissimilarity with seizure distances
+## <a name="scatter-szdiss-szdist"></a> Scatterplots of seizure dissimilarity and seizure distances
 
 In order to obtain the scatterplots between seizure dissimilarity and seizure IMF distance, 
 as well as the ones of seizure dissimilarity and seizure time distance, you will have to run the following python scripts:
