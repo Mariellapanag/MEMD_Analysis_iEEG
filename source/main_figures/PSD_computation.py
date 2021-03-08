@@ -1,5 +1,4 @@
 from pathlib import Path
-import glob
 import time
 import os
 import scipy.io as sio
@@ -44,8 +43,8 @@ def process_file(in_path):
 
     '''Read Hilbert instantaneous frequency and amplitude'''
     print ( "{}{}".format ( "Read the instantaneous frequency, amplitude and phase ", id_patient ) )
-    hilbert_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*Hilbert_output"))
-    hilbert_output = sio.loadmat(os.path.join(hilbert_path[0], 'hilbert_output.mat'))
+    hilbert_path = os.path.join(ROOT_DIR, result_file, id_patient, "Hilbert_output")
+    hilbert_output = sio.loadmat(os.path.join(hilbert_path, 'hilbert_output.mat'))
     n_imfs = hilbert_output['n_imfs'][0][0]
     n_comp = hilbert_output['n_comp'][0][0]
 
@@ -75,35 +74,7 @@ def process_file(in_path):
     id_nan = np.where(np.isnan(imf_bin_mean))
     imf_bin_mean[id_nan] = 0
     bin_cntrs_y = (y_edge[1:] + y_edge[:-1])/2
-    """
-    Hilbert Huang Transform as a 2D representation - PSD
-    Plot multiple figures into a single PDF with matplotlib, using the
-    object-oriented interface.
-    """
-    x_edge = binstime
-    y_edge = binsfreq
-    fig_name = "2D_HilbertPSD_{}.{}".format (id_patient, "pdf" )
-    with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:
-        for imf in range ( 0, n_imfs):
-            X, Y = np.meshgrid ( x_edge[:-1], y_edge[:-1] )
-            Z = imf_bin_mean[imf, :, :].T
-            fig = plt.figure ()
-            ax = fig.gca()
-            #cmap = viridis
-            #cmap  seismic
-            plot = ax.pcolormesh ( X, Y, Z, cmap="seismic" , rasterized = True)
-            fig.colorbar ( plot, ax=ax, format='%.1e', label = "Power")
-            # Set label and title names
-            ax.set_title ( "IMF{} \n Hilbert Spectrum".format ( imf + 1 ) )
-            ax.set ( xlabel='Time (days)', ylabel='Frequency' )
-            # ax.set_xscale ( 'log' )
-            ax.set_yscale ( 'log' )
-            plt.tight_layout()
-            canvas = FigureCanvasPdf(fig)
-            canvas.print_figure(pages)
-            plt.close("all")
-    """
-    Investigate cases where the observations are low in bins
+    """Investigate cases where the observations are low in bins
     and set a threshold
     """
     binstime = time
@@ -250,7 +221,7 @@ def parallel_process():
     files = [os.path.join(ROOT_DIR, input_path, folder) for folder in folders]
 
     # test the code
-    files = files[5:6]
+    # files = files[17:18]
 
     start_time = time.time ()
     # Test to make sure concurrent map is working
