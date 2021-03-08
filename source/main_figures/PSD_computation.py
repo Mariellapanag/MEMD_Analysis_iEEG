@@ -33,7 +33,7 @@ folder = folder.split(".py")[0]
 def process_file(in_path):
     """Weighted power - frequency computation for all IMF*DIM
     """
-    # Extract path components
+    '''Extract path components'''
     parts = Path(in_path).parts
     id_patient = parts[-1]
 
@@ -42,7 +42,7 @@ def process_file(in_path):
     os.makedirs(out_subfolder, exist_ok = True)
     print ( "Processing file:", in_path )
 
-    # Read Hilbert instantaneous frequency, amplitude and phase
+    '''Read Hilbert instantaneous frequency and amplitude'''
     print ( "{}{}".format ( "Read the instantaneous frequency, amplitude and phase ", id_patient ) )
     hilbert_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*Hilbert_output"))
     hilbert_output = sio.loadmat(os.path.join(hilbert_path[0], 'hilbert_output.mat'))
@@ -52,12 +52,7 @@ def process_file(in_path):
     ####################################################################
     frequency = hilbert_output['frequency']
     amplitude = hilbert_output['amplitude']
-    # phase = hilbert_output['phase']
-    # phase_wrap = hilbert_output['phase_wrap']
-    # phase_angle = hilbert_output['phase_angle']
-    power = hilbert_output['power']
     time = hilbert_output['time'][0]
-
     '''Hilbert Huang Spectrum Computation'''
     binstime = time
     fs_limit = 2880 / 2
@@ -78,12 +73,10 @@ def process_file(in_path):
     id_nan = np.where(np.isnan(imf_bin_mean))
     imf_bin_mean[id_nan] = 0
     '''Marginal Density of each Comp within IMF'''
-
     id_nan = np.where(np.isnan(imf_bin_mean))
     imf_bin_mean[id_nan] = 0
 
     bin_cntrs_y = (y_edge[1:] + y_edge[:-1])/2
-
     """
     Hilbert Huang Transform as a 2D representation - PSD
     Plot multiple figures into a single PDF with matplotlib, using the
@@ -111,7 +104,6 @@ def process_file(in_path):
             canvas = FigureCanvasPdf(fig)
             canvas.print_figure(pages)
             plt.close("all")
-
     """
     Investigate cases where the observations are low in bins
     and set a threshold
@@ -140,19 +132,16 @@ def process_file(in_path):
         plt.title("Count of observations within each time-frequency bin \n for each IMF")
         plt.xlabel('Count')
         plt.ylabel("Density")
-
     plt.tight_layout ()
     format = "pdf"
     name = "Density_Count_bins_IMFs_{}".format (id_patient )
     fig_name = "{}.{}".format ( name, format )
     plt.savefig ( os.path.join ( out_subfolder, fig_name ) )
     plt.close ( 'all' )
-
     ############# IMF power spectral density
     all_imfs = (np.nansum(imf_bin_mean, axis = 1))/time[:-1].shape
     indx = np.where(allImf_count<40)
     all_imfs[indx] = 0
-
     '''Plot imfs'''
     # colors = ["#0a3955","#174c6f", "#1b5b85", "#3b526d", "#466484", "#4e7399",
     #           "#68738c", "#7484a0", "#7c92b0", "#969cae", "#a1aabd", "#a8b3c9", "#c9cbd5", "#cfd2de",
@@ -180,15 +169,14 @@ def process_file(in_path):
     plt.ylim ( 1e-07, 1e-03 )
     plt.tight_layout ()
     format = "pdf"
-    name = "AllIMFs_psd_last{}".format (subfolder )
+    name = "AllIMFs_psd_last{}".format (id_patient )
     fig_name = "{}.{}".format ( name, format )
     #fig.set_size_inches(66/25.4, 54/25.4)
-    plt.savefig ( os.path.join ( path_results, fig_name ), dpi = 100)
+    plt.savefig ( os.path.join ( out_subfolder, fig_name ), dpi = 100)
     plt.close ( 'all' )
-
     '''Plot all IMFs'''
-    fig_name = "EachIMF_{}.{}".format (subfolder, "pdf" )
-    with PdfPages(os.path.join(path_results, fig_name)) as pages:
+    fig_name = "EachIMF_{}.{}".format (id_patient, "pdf" )
+    with PdfPages(os.path.join(out_subfolder, fig_name)) as pages:
         i=0
         for imf in range(0, n_imfs):
             fig, ax = plt.subplots (figsize=(10, 8)  )
@@ -206,7 +194,6 @@ def process_file(in_path):
             canvas.print_figure(pages)
             plt.close("all")
             i = i+1
-
     '''Plot imfs without last IMF'''
     # colors = ["#0a3955","#174c6f", "#1b5b85", "#3b526d", "#466484", "#4e7399",
     #           "#68738c", "#7484a0", "#7c92b0", "#969cae", "#a1aabd", "#a8b3c9", "#c9cbd5", "#cfd2de",
@@ -234,12 +221,11 @@ def process_file(in_path):
     plt.ylim ( 1e-07, 1e-03 )
     plt.tight_layout ()
     format = "pdf"
-    name = "AllIMFs_psd_wo_lastIMF{}".format (subfolder )
+    name = "AllIMFs_psd_wo_lastIMF{}".format (id_patient )
     fig_name = "{}.{}".format ( name, format )
     #fig.set_size_inches(66/25.4, 54/25.4)
-    plt.savefig ( os.path.join ( path_results, fig_name ), dpi = 100)
+    plt.savefig ( os.path.join ( out_subfolder, fig_name ), dpi = 100)
     plt.close ( 'all' )
-
     '''Compute and save the dominant frequency based on the above calculation'''
     idfreq = np.argmax ( all_imfs, axis=1 )
     dominant_frequency = np.empty(n_imfs)
@@ -250,14 +236,14 @@ def process_file(in_path):
         lhh[imf] = all_imfs[imf, id]
     '''Save the dominant frequency for all IMFs'''
     d_freq = {'dom_freq': dominant_frequency, "MarginalHH": lhh}
-    sio.savemat ( os.path.join ( out_subfolder, "dominant_Psdfreq_allIMFs_{}.mat".format ( subfolder ) ), d_freq )
+    sio.savemat ( os.path.join ( out_subfolder, "dominant_Psdfreq_allIMFs_{}.mat".format ( id_patient ) ), d_freq )
     '''Compute and save the total SUM for each patient'''
     total_psd = {'total_SUM': np.sum(all_imfs[1:-1, :], axis=0), "freqseq": binsfreq, "freq_edge": y_edge, "bin_cntrs_freq": bin_cntrs_y}
-    sio.savemat ( os.path.join ( out_subfolder, "Total_SUM_IMFs_wo_1andLast{}.mat".format ( subfolder ) ), total_psd )
+    sio.savemat ( os.path.join ( out_subfolder, "Total_SUM_IMFs_wo_1andLast{}.mat".format ( id_patient ) ), total_psd )
     total_psd1 = {'total_SUM': np.sum(all_imfs, axis=0), "freqseq": binsfreq, "freq_edge": y_edge, "bin_cntrs_freq": bin_cntrs_y}
-    sio.savemat ( os.path.join ( out_subfolder, "Total_SUM_IMFs_{}.mat".format ( subfolder ) ), total_psd1 )
+    sio.savemat ( os.path.join ( out_subfolder, "Total_SUM_IMFs_{}.mat".format ( id_patient ) ), total_psd1 )
     total_psd2 = {'total_SUM': np.sum(all_imfs[0:-1,:], axis=0), "freqseq": binsfreq, "freq_edge": y_edge, "bin_cntrs_freq": bin_cntrs_y}
-    sio.savemat ( os.path.join ( out_subfolder, "Total_SUM_IMFs_wo_LastIMF{}.mat".format ( subfolder ) ), total_psd2 )
+    sio.savemat ( os.path.join ( out_subfolder, "Total_SUM_IMFs_wo_LastIMF{}.mat".format ( id_patient ) ), total_psd2 )
 
 
 def parallel_process():
@@ -267,7 +253,7 @@ def parallel_process():
     files = [os.path.join(ROOT_DIR, input_path, folder) for folder in folders]
 
     # test the code
-    # files = files[5:6]
+    files = files[5:6]
 
     start_time = time.time ()
     # Test to make sure concurrent map is working
