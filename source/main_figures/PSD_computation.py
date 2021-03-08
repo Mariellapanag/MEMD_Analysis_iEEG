@@ -69,13 +69,11 @@ def process_file(in_path):
                                                                                expand_binnumbers=True )
             allComp_mean[comp, :, :] = statistic
         imf_bin_mean[imf, :, :] = np.nanmean( allComp_mean, axis=0 )
-
     id_nan = np.where(np.isnan(imf_bin_mean))
     imf_bin_mean[id_nan] = 0
     '''Marginal Density of each Comp within IMF'''
     id_nan = np.where(np.isnan(imf_bin_mean))
     imf_bin_mean[id_nan] = 0
-
     bin_cntrs_y = (y_edge[1:] + y_edge[:-1])/2
     """
     Hilbert Huang Transform as a 2D representation - PSD
@@ -122,7 +120,6 @@ def process_file(in_path):
             statistic, x_edge, y_edge, binnumber = stats.binned_statistic_2d ( x, y, values, 'count',
                                                                                bins=[binstime, binsfreq],
                                                                                expand_binnumbers=True )
-
             allComp_count[comp, :, :] = statistic
 
         allImf_temp = np.nansum(allComp_count, axis = 1)
