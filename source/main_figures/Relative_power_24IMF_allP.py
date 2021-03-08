@@ -59,20 +59,6 @@ def summarise_imfs_allP():
 
         format = "pdf"
 
-
-        fig, ax = plt.subplots ()
-        g = sns.heatmap ( df_merged_perc , annot = True)
-        for t in ax.texts: t.set_text ( t.get_text () + " %" )
-        g.set_xlabel ( "Patients" )
-        g.set_ylabel ( "Frequency Bands" )
-        plt.title ( 'All Patients - % per patient' )
-
-        # Save figure
-        plt.tight_layout ()
-        fig_name = "Allperc_annot_Summary_W_weights_per_freqBand_{}.{}".format (name_fig, format )
-        plt.savefig ( os.path.join ( out_figure, fig_name ), format=format )
-        plt.close ( "all" )
-
         fig, ax = plt.subplots ()
         g = sns.heatmap ( df_merged_perc)
         for t in ax.texts: t.set_text ( t.get_text () + " %" )
