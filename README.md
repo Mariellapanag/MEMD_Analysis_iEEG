@@ -9,7 +9,9 @@ MEMD_Analysis_iEEG
     * [Seizure Dissimilarity and Distance Heatmaps](#dist-heatmaps)
     * [Seizure Dissimilarity and Distance Heatmaps (standardised)](#dist-stand-heatmaps)
     * [Scatterplots of seizure dissimilarity with seizure distances](#scatter-szdiss-szdist)
-    * [Marginal Hilbert Spectrum](#marginal-hilbert)
+    * [Marginal Hilbert Spectrum of IMFs](#psd-computation)
+    * [Contribution of iEEG main frequency bands to the 24h IMF](#rel-power)
+    * [Gini index of IMFs for every frequency band across all subjects](#"gini-index")
 * [Supporting figures](#other-figures)
     * [Mantel test figures](#mantel-test-fig)
     * [Summary plot combining Mantel test and Dominant Frequency](#mantel-dom-freq)
@@ -162,7 +164,7 @@ For obtaining the graphical representations, the following python scripts need t
  - `Relative_power_24IMF.py`
  - `Relative_power_24IMF_allP.py`
 
-## <a name="gini_index"></a> Gini index of IMFs for every frequency band across all subjects
+## <a name="gini-index"></a> Gini index of IMFs for every frequency band across all subjects
 For obtaining the graphical representation, the following python scripts need to be run:
 
  - `Hilbert_output.py`
