@@ -63,8 +63,8 @@ For obtaining the graphical representations, the following python scripts need t
 ## <a name="rel-power"></a>  Contribution of iEEG main frequency bands to the 24h IMF
 For obtaining the graphical representations, the following python scripts need to be run:
 
- - `Hilbert_output.py`
- - `PSD_computation.py`
+ - funcs_need/`Hilbert_output.py`
+ - main_figures/`PSD_computation.py`
  - `Relative_power_24IMF.py`
  - `Relative_power_24IMF_allP.py`
 
