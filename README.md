@@ -148,14 +148,27 @@ The output of `Mantel_test_raw.py` would be the aforementioned scatterplots (one
 the spearman correlation values displayed in the title of the plots.
 Mantel test results are also generated, but not displayed in the scatterplots, as they will be used later on, in order to perform FDR to all patients.
 
-## <a name="marginal-hilbert"></a> Marginal Hilbert Spectrum
-The following graphical representations are available:
- - marginal Hilbert Spectrum of frequency of all analytical IMF signals across components
- - marginal Hilbert Spectrum of frequency of all components within IMF 
- - Hilbert-Huang spectrum for each IMF
-For generating these plots, once needs to run the following python scripts:
+## <a name="psd-computation"></a> Marginal Hilbert Spectrum of IMFs
+For obtaining the graphical representations, the following python scripts need to be run:
+ 
  - `Hilbert_output.py`
  - `PSD_computation.py`
+
+## <a name="rel-power"></a>  Contribution of iEEG main frequency bands to the 24h IMF
+For obtaining the graphical representations, the following python scripts need to be run:
+
+ - `Hilbert_output.py`
+ - `PSD_computation.py`
+ - `Relative_power_24IMF.py`
+ - `Relative_power_24IMF_allP.py`
+
+## <a name="gini_index"></a> Gini index of IMFs for every frequency band across all subjects
+For obtaining the graphical representation, the following python scripts need to be run:
+
+ - `Hilbert_output.py`
+ - `PSD_computation.py`
+ - `Gini_index_allIMFs.py`
+ - `Gini_index_allIMFs_allP.py`
 
 # <a name="other-figures"></a> Supporting figures
 Figures .....
@@ -171,6 +184,5 @@ the user should run the following python scripts:
 Note that the first 3 python scripts (`sz_dist_raw.py`, `Mantel_test_raw.py`, `FDR_Mantel_test_raw.py`) should executed for all subjects; the code automatically generate the results 
 for subjects with #seizures > 5.
 
-## <a name="mantel-dom-freq"></a> Summary plot combining Mantel test and Dominant Frequency
  - ``
  
