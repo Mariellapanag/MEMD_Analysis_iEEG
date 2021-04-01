@@ -72,7 +72,7 @@ def process_file (in_path):
         # Import the file with the Seizure Dissimilarity results
         print ( "{}{}".format ( "Reading Seizure Dissimilarity matrix mat file ", id_patient ) )
         filename_AllzDissMat = "AllSzDissMat.mat"
-        DissMat_all = sio.loadmat ( os.path.join ( ROOT_DIR, "data", "longterm_preproc_sz", id_patient, filename_AllzDissMat ) )['AllSzDissMat']
+        DissMat_all = sio.loadmat ( os.path.join ( ROOT_DIR, "data", "longterm_preproc", id_patient, filename_AllzDissMat ) )['AllSzDissMat']
         DissMatFC_all = DissMat_all[3][0]
 
         '''Reading all seizure distances'''
@@ -80,7 +80,7 @@ def process_file (in_path):
 
         '''Reading all seizure time distances and seizure euclidean distances'''
         print('Reading Seizure Distances')
-        seizure_dist_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*sz_dist_raw"))
+        seizure_dist_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "sz_dist_raw"))
         seizures_dist_eucl_all = sio.loadmat ( os.path.join (seizure_dist_path[0],  "seizure_dist_eucl_{}.mat".format(id_patient) ) )
         seizures_time_dist = sio.loadmat ( os.path.join (seizure_dist_path[0],  "seizure_time_dist_{}.mat".format(id_patient) ) )['time_dist']
 
@@ -120,8 +120,6 @@ def process_file (in_path):
                 fig, ax = plt.subplots(figsize=(10,8))
 
                 g = sns.scatterplot(x = dist1_array, y = dist2_array)
-                #ax.set_xticklabels ( ax.get_xticklabels (), rotation= 360)
-                #g.set(xticklabels=np.arange(min(dist2_array), max(dist2_array), 0.2))
                 g.set_xlabel ( "Seizure Dissimilarity" )
                 g.set_ylabel ( "Seizure IMF distance" )
                 g.set_title ( 'Seizure Dissimilarity vs Seizure IMF{} Distance \n Spearman {}'.format(imf+1, round(rho, 3)))
@@ -169,18 +167,19 @@ def parallel_process ():
 
     folders = os.listdir ( os.path.join ( ROOT_DIR, input_path ) )
     files = [os.path.join ( ROOT_DIR, input_path, folder ) for folder in folders]
+
+    # Run for a number of patients
     # files = [files[i] for i in [3,5,8,9,11,12, 13]]
-    # test the code
+    # Run for one patient
     # files = files[5:6]
 
     start_time = time.time ()
-    # Test to make sure concurrent map is working
     with ProcessPoolExecutor ( max_workers=3 ) as executor:
         futures = [executor.submit ( process_file, in_path ) for in_path in files]
         for future in as_completed ( futures ):
-            # if future.result() == True:
-            processed += 1
-            print ( "Processed {}files.".format ( processed, len ( files ) ), end="\r" )
+            if future.result() == True:
+                processed += 1
+                print ( "Processed {}files.".format ( processed, len ( files ) ), end="\r" )
 
     end_time = time.time ()
     print ( "Processed {} files in {:.2f} seconds.".format ( processed, end_time - start_time ) )

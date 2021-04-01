@@ -73,12 +73,12 @@ def process_file (in_path):
         # Import the file with the Seizure Dissimilarity results
         print ( "{}{}".format ( "Reading Seizure Dissimilarity matrix mat file ", id_patient ) )
         filename_AllzDissMat = "AllSzDissMat.mat"
-        DissMat_all = sio.loadmat ( os.path.join ( ROOT_DIR, "data", "longterm_preproc_sz", id_patient, filename_AllzDissMat ) )['AllSzDissMat']
+        DissMat_all = sio.loadmat ( os.path.join ( ROOT_DIR, input_path, id_patient, filename_AllzDissMat ) )['AllSzDissMat']
         DissMatFC_all = DissMat_all[3][0]
 
         '''Reading all seizure time distances and seizure euclidean distances'''
         print('Reading Seizure Distances')
-        seizure_dist_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*sz_dist_raw"))
+        seizure_dist_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "sz_dist_raw"))
         seizures_dist_eucl_all = sio.loadmat ( os.path.join (seizure_dist_path[0],  "seizure_dist_eucl_{}.mat".format(id_patient) ) )
         seizures_time_dist = sio.loadmat ( os.path.join (seizure_dist_path[0],  "seizure_time_dist_{}.mat".format(id_patient) ) )['time_dist']
 
@@ -87,8 +87,6 @@ def process_file (in_path):
 
         print('Beginning plotting seizure dissimilarity')
         print('seizures:{}'.format(n_seizures))
-
-        # Plot seizure dissimilarity matrix only in the "initial" folder
 
         # Heatmap of Seizure Dissimilarity matrix
         fig, ax = plt.subplots ( figsize=(12, 8) )
@@ -215,7 +213,7 @@ def parallel_process ():
     files = [os.path.join ( ROOT_DIR, input_path, folder ) for folder in folders]
     # files = [files[i] for i in [3,5,8,9,11,12, 13]]
     # test the code
-    files = files[5:6]
+    # files = files[5:6]
 
     start_time = time.time ()
     # Test to make sure concurrent map is working

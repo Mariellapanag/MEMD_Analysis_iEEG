@@ -65,16 +65,15 @@ def process_file (in_path):
         # Import the file with the final MEMD and STEMD results
         print ( "{}{}".format ( "Reading MEMD mat file ", id_patient ) )
         filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand.mat"
-        #filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand_shuffled.mat"
         MEMD_all = sio.loadmat ( os.path.join(in_path, filename_memd ))
         IMF_MEMD = MEMD_all["imf_memd"]
         [n_comp, n_imfs, n_time] = IMF_MEMD.shape
 
         '''Path of standardised seizure distances and dissimilarity matrix'''
-        stand_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "*sz_dist_stand_raw"))
+        stand_path = glob.glob(os.path.join(ROOT_DIR, result_file, id_patient, "sz_dist_stand_raw"))
 
         '''Reading standardised seizure dissimilarity matrix'''
-        DissM_FC_stand = sio.loadmat ( os.path.join (stand_path[0],  "DissMatFC_stand_{}.mat".format(id_patient) ) )['DissFC_stand']
+        DissM_FC_stand = sio.loadmat ( os.path.join (stand_path[0], "DissMatFC_stand_{}.mat".format(id_patient) ) )['DissFC_stand']
 
         '''Reading all standardised seizure distances'''
         print('Reading Seizure Distances')
@@ -297,7 +296,7 @@ def parallel_process ():
     files = [os.path.join ( ROOT_DIR, input_path, folder ) for folder in folders]
     # files = [files[i] for i in [3,5,8,9,11,12, 13]]
     # test the code
-    files = files[5:6]
+    #files = files[5:6]
 
     start_time = time.time ()
     # Test to make sure concurrent map is working

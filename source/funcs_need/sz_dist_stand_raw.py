@@ -72,17 +72,15 @@ def process_file (in_path):
         # Import the file with the final MEMD and STEMD results
         print ( "{}{}".format ( "Reading MEMD mat file ", id_patient ) )
         filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand.mat"
-        #filename_memd = "MEMDNSTEMD_NMF_BP_CA_normedBand_shuffled.mat"
         MEMD_all = sio.loadmat ( os.path.join(in_path, filename_memd ))
         IMF_MEMD = MEMD_all["imf_memd"]
-        # IMF_MEMD = MEMD_all["imf_perm_memd"]
         [n_comp, n_imfs, n_time] = IMF_MEMD.shape
 
         '''Read Seizure Dissimilarity'''
         # Import the file with the Seizure Dissimilarity results
         print ( "{}{}".format ( "Reading Seizure Dissimilarity matrix mat file ", id_patient ) )
         filename_AllzDissMat = "AllSzDissMat.mat"
-        DissMat_all = sio.loadmat ( os.path.join ( ROOT_DIR, "data", "longterm_preproc_sz", id_patient, filename_AllzDissMat ) )['AllSzDissMat']
+        DissMat_all = sio.loadmat ( os.path.join ( ROOT_DIR, "data", "longterm_preproc", id_patient, filename_AllzDissMat ) )['AllSzDissMat']
         DissMatFC_all = DissMat_all[3][0]
 
         '''Reading all seizure time distances and seizure euclidean distances'''
