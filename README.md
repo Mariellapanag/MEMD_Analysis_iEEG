@@ -31,9 +31,8 @@ The output of each python script by default will be saved in a folder named as
 the python script file running within the _**results**_ folder.
 
 ## <a name="choice-of-run"></a> Run for one patient or all at once
-In most of the python files used by the user, there is the choice of generating the results for 1 or more patients or
-for all patients using parallel programming.
-The exact lines of code appear in each python file the user can run are the following:
+In most of the python files there is the choice of generating the results for 1 or more patients using parallel programming.
+This option is available through the following code chunk that appears at the end of the python file/files:
 
 ```python
 def parallel_process ():
@@ -55,15 +54,13 @@ def parallel_process ():
     print ( "Processed {} files in {:.2f} seconds.".format ( processed, end_time - start_time ) )
 
 ```
-Using the above code chunk the user can generate results for all patients using parallel programming.
 
-For running the chosen python scripts for **one patient**, for example **patient ID06**, user needs
- to add the following line of code:
+For generating results for **one patient**, such as **patient ID06**, the user should add the following line of code:
  
 ```python
 files = files[5:6]
 ```
-The final code chunk would look like this:
+The above code chunk will look like this:
 
 ```python
 def parallel_process ():
@@ -87,13 +84,13 @@ def parallel_process ():
     print ( "Processed {} files in {:.2f} seconds.".format ( processed, end_time - start_time ) )
 
 ```
-For running the chosen python scripts for **more than one subject**, for example **subjects ID02, ID03, ID04, ID05**, user needs
+For running the python script/s for **more than one subject**, for example **subjects ID02, ID03, ID04, ID05**, the user needs
  to add the following line of code:
  
 ```python
 files = [files[i] for i in [1,2,3,4]]
 ```
-The final code chunk would look like this:
+The code chunk will look like this:
 
 ```python
 def parallel_process ():
@@ -122,7 +119,7 @@ The above code chunk is not included in the following python scripts:
  
 # <a name="main-figures"></a> Main Figures
 
-Main Figures .......
+In this section we provide the code for computing and generating the some of the main figures appear in the paper.
 
 ## <a name="dist-heatmaps"></a> Seizure Dissimilarity and Distance Heatmaps
 
@@ -186,5 +183,5 @@ the user should run the following python scripts:
 Note that the first 3 python scripts (`sz_dist_raw.py`, `Mantel_test_raw.py`, `FDR_Mantel_test_raw.py`) should executed for all subjects; the code automatically generate the results 
 for subjects with #seizures > 5.
 
- - ``
+ 
  
