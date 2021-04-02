@@ -5,5 +5,5 @@ results/
 
 # Ignore specific files in Git
 source/funcs_need/FDR_Mantel_test_raw_.py
-source/main_figures/A8.1 Heatmap_Mantel_test_raw*
-source/main_figures/A9. Summary_Mantel_dom_freq*
+source/main_figures/Heatmap_Mantel_test_raw*
+source/main_figures/Summary_Mantel_dom_freq*
