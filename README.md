@@ -16,7 +16,7 @@ MEMD_Analysis_iEEG
 * [Run for one patient or all at once](#choice-of-run)
 
 # <a name="general-info"></a> General info
-This project is ........
+This repository contains python code for generating the main figures of the paper "" 
 
 # <a name="setup"></a> Setup
 ## <a name="results-folder"></a> Choose the name of the folder _results_
@@ -90,8 +90,6 @@ For obtaining the graphical representation, the following python scripts need to
 *Plots generated only for patients with more than 5 seizures*
 
 # <a name="other-figures"></a> Supporting figures
-Figures .....
-add brief description of the figures included
 
 ## <a name="scatter-szdiss-szdist"></a> Scatterplots of seizure dissimilarity and seizure distances
 
