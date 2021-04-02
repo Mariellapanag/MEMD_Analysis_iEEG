@@ -65,14 +65,14 @@ For obtaining the graphical representations, the following python scripts need t
 
  - funcs_need/`Hilbert_output.py`
  - main_figures/`PSD_computation.py`
- - `Relative_power_24IMF.py`
- - `Relative_power_24IMF_allP.py`
+ - funcs_need/`Relative_power_24IMF.py`
+ - main_figures/`Relative_power_24IMF_allP.py`
 
 ## <a name="gini-index"></a> Gini index of IMFs for every frequency band across all subjects
 For obtaining the graphical representation, the following python scripts need to be run:
 
- - `Hilbert_output.py`
- - `PSD_computation.py`
+ - funcs_need/`Hilbert_output.py`
+ - main_figures/`PSD_computation.py`
  - `Gini_index_allIMFs.py`
  - `Gini_index_allIMFs_allP.py`
 
