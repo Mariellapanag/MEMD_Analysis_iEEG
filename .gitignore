@@ -3,4 +3,5 @@ data/
 
 results/
 
-source/funcs_need/FDR_Mantel_test_raw.py
+# Ignore specific files in Git
+source/funcs_need/FDR_Mantel_test_raw_.py
