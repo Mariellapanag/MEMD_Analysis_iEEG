@@ -13,8 +13,6 @@ MEMD_Analysis_iEEG
     * [A combination of IMF seizure distances on different timescales can explain seizure dissimilarity in most subjects in a multiple regression model](#model-LASSO)
 * [Supporting figures](#other-figures)
     * [Scatterplots of seizure dissimilarity with seizure distances](#scatter-szdiss-szdist)
-    * [Mantel test figures](#mantel-test-fig)
-    * [Summary plot combining Mantel test and Dominant Frequency](#mantel-dom-freq)
 * [Run for one patient or all at once](#choice-of-run)
 
 # <a name="general-info"></a> General info
@@ -104,22 +102,10 @@ as well as the ones of seizure dissimilarity and seizure time distance, you will
 
 The output of `Mantel_test_raw.py` would be the aforementioned scatterplots (one for the time distance and multiple ones for all IMFs), along with
 the spearman correlation values displayed in the title of the plots.
-Mantel test results are also generated, but not displayed in the scatterplots, as they will be used later on, in order to perform FDR to all patients.
+Mantel test results are also generated, but not displayed in the title of the scatterplots.
 
 *Plots generated only for patients with more than 5 seizures*
 
-
-## <a name="mantel-test-fig"></a> Mantel test figures
-For generating figures for the Mantel test p-values, as well as the resulting q-values after applying the FDR correction, 
-the user should run the following python scripts:
- - funcs_need/`sz_dist_raw.py`
- - `Mantel_test_raw.py`
- - `FDR_Mantel_test_raw.py`
- - `Heatmap_Mantel_test_raw.py`
-Note that the first 3 python scripts (`sz_dist_raw.py`, `Mantel_test_raw.py`, `FDR_Mantel_test_raw.py`) should executed for all subjects; the code automatically generate the results 
-for subjects with #seizures > 5.
-
- 
  ## <a name="choice-of-run"></a> Run for one patient or all at once
  In most of the python files there is the choice of generating the results for 1 or more patients using parallel programming.
  This option is available through the following code chunk that appears at the end of the python file/files:
