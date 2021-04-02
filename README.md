@@ -10,6 +10,7 @@ MEMD_Analysis_iEEG
     * [Marginal Hilbert Spectrum of IMFs](#psd-computation)
     * [Contribution of iEEG main frequency bands to the 24h IMF](#rel-power)
     * [Gini index of IMFs for every frequency band across all subjects](#gini-index)
+    * [A combination of IMF seizure distances on different timescales can explain seizure dissimilarity in most subjects in a multiple regression model](#model-LASSO)
 * [Supporting figures](#other-figures)
     * [Scatterplots of seizure dissimilarity with seizure distances](#scatter-szdiss-szdist)
     * [Mantel test figures](#mantel-test-fig)
@@ -68,13 +69,27 @@ For obtaining the graphical representations, the following python scripts need t
  - funcs_need/`Relative_power_24IMF.py`
  - main_figures/`Relative_power_24IMF_allP.py`
 
+*Plots generated for all patients*
 ## <a name="gini-index"></a> Gini index of IMFs for every frequency band across all subjects
 For obtaining the graphical representation, the following python scripts need to be run:
 
  - funcs_need/`Hilbert_output.py`
  - main_figures/`PSD_computation.py`
- - `Gini_index_allIMFs.py`
- - `Gini_index_allIMFs_allP.py`
+ - funcs_need/`Gini_index_allIMFs.py`
+ - main_figures/`Gini_index_allIMFs_allP.py`
+
+*Plots generated for all patients*
+
+# <a name="model-LASSO"></a> A combination of IMF seizure distances on different timescales can explain seizure dissimilarity in most subjects in a multiple regression model
+
+ - funcs_need/`sz_dist_raw.py`
+ - funcs_need/`sz_dist_stand_raw.py`
+ - funcs_need/`Preparing_data_for_LASSO.py`
+ - funcs_need/`Constrained_LASSO_IMFs.py`
+ - funcs_need/`LinearRegression_IMFs.py`
+ - main_figures/`Gather_Rsquared_allP.py`
+ 
+*Plots generated only for patients with more than 5 seizures*
 
 # <a name="other-figures"></a> Supporting figures
 Figures .....
@@ -121,9 +136,9 @@ for subjects with #seizures > 5.
      with ProcessPoolExecutor ( max_workers=4 ) as executor:
          futures = [executor.submit ( process_file, in_path ) for in_path in files]
          for future in as_completed ( futures ):
-             # if future.result() == True:
-             processed += 1
-             print ( "Processed {}files.".format ( processed, len ( files ) ), end="\r" )
+             if future.result() == True:
+                processed += 1
+                print ( "Processed {}files.".format ( processed, len ( files ) ), end="\r" )
  
      end_time = time.time ()
      print ( "Processed {} files in {:.2f} seconds.".format ( processed, end_time - start_time ) )
@@ -151,9 +166,9 @@ for subjects with #seizures > 5.
      with ProcessPoolExecutor ( max_workers=4 ) as executor:
          futures = [executor.submit ( process_file, in_path ) for in_path in files]
          for future in as_completed ( futures ):
-             # if future.result() == True:
-             processed += 1
-             print ( "Processed {}files.".format ( processed, len ( files ) ), end="\r" )
+             if future.result() == True:
+                processed += 1
+                print ( "Processed {}files.".format ( processed, len ( files ) ), end="\r" )
  
      end_time = time.time ()
      print ( "Processed {} files in {:.2f} seconds.".format ( processed, end_time - start_time ) )
@@ -181,9 +196,9 @@ for subjects with #seizures > 5.
      with ProcessPoolExecutor ( max_workers=4 ) as executor:
          futures = [executor.submit ( process_file, in_path ) for in_path in files]
          for future in as_completed ( futures ):
-             # if future.result() == True:
-             processed += 1
-             print ( "Processed {}files.".format ( processed, len ( files ) ), end="\r" )
+             if future.result() == True:
+                processed += 1
+                print ( "Processed {}files.".format ( processed, len ( files ) ), end="\r" )
  
      end_time = time.time ()
      print ( "Processed {} files in {:.2f} seconds.".format ( processed, end_time - start_time ) )

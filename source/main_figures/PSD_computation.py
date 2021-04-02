@@ -213,6 +213,7 @@ def process_file(in_path):
     total_psd2 = {'total_SUM': np.sum(all_imfs[0:-1,:], axis=0), "freqseq": binsfreq, "freq_edge": y_edge, "bin_cntrs_freq": bin_cntrs_y}
     sio.savemat ( os.path.join ( out_subfolder, "Total_SUM_IMFs_wo_LastIMF{}.mat".format ( id_patient ) ), total_psd2 )
 
+    return True
 
 def parallel_process():
     processed = 0

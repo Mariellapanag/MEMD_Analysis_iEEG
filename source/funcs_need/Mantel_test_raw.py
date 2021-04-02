@@ -160,7 +160,7 @@ def process_file (in_path):
             canvas = FigureCanvasPdf(fig)
             canvas.print_figure(pages)
             plt.close("all")
-
+    return True
 
 def parallel_process ():
     processed = 0

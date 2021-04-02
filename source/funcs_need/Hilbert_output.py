@@ -109,6 +109,7 @@ def process_file(in_path):
     hilb_res = {'frequency': frequency, 'amplitude': amplitude, 'phase': phase, 'phase_wrap': phase_wrap,
                 'phase_angle': phase_angle, 'power': power, 'time': time, 'n_comp': n_comp, 'n_imfs': n_imfs, 'n_time': n_time}
     sio.savemat(os.path.join(out_subfolder, "hilbert_output.mat"), hilb_res)
+    return True
 
 def parallel_process():
 

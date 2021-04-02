@@ -228,6 +228,7 @@ def process_file(in_path):
             plt.savefig ( os.path.join ( out_subfolder, name_fig ) )
             plt.close ( 'all' )
             break
+    return True
 
 def parallel_process():
     processed = 0

@@ -143,6 +143,7 @@ def process_file (in_path):
                     canvas.print_figure(pages)
                     plt.close("all")
 
+    return True
 
 def parallel_process ():
     processed = 0
@@ -158,9 +159,9 @@ def parallel_process ():
     with ProcessPoolExecutor ( max_workers=4 ) as executor:
         futures = [executor.submit ( process_file, in_path ) for in_path in files]
         for future in as_completed ( futures ):
-            # if future.result() == True:
-            processed += 1
-            print ( "Processed {}files.".format ( processed, len ( files ) ), end="\r" )
+            if future.result() == True:
+                processed += 1
+                print ( "Processed {}files.".format ( processed, len ( files ) ), end="\r" )
 
     end_time = time.time ()
     print ( "Processed {} files in {:.2f} seconds.".format ( processed, end_time - start_time ) )
