@@ -21,14 +21,13 @@ This repository contains python code for generating the main figures of the pape
 # <a name="setup"></a> Setup
 ## <a name="results-folder"></a> Choose the name of the folder _results_
 After downloading the project from Github, you can start producing results and figures.
-Results will be stored in a folder results within the main directory folder of the project by default.
+Results will be stored in a folder _results_ within the main directory folder of the project by default.
 However, the user can change the name of the folder by going to the python file `results.py`
 which is located in the following path:
 `MEMD_Analysis_iEEG\funcs\Global_settings\results.py`
-The output of each python script by default will be saved in a folder named as 
+The output of each python script by default will be saved in a folder named exactly as 
 the python script file running within the _**results**_ folder.
 
- 
 # <a name="main-figures"></a> Main Figures
 
 In this section we provide the code for computing and generating the some of the main figures appear in the paper.
