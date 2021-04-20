@@ -62,7 +62,7 @@ def summarise_allP():
     '''Violin plots'''
     '''Gini Index for each Frequency band - different bin selection for dominant frequency'''
     sns.set_style("whitegrid")
-    bins_new = np.logspace(-3,3.03,12)
+    bins_new = np.logspace(-3,3.11,12)
     bin_labels = []
     for i in range(0, len(bins_new)-1):
         bin_labels.append("($10^{{{:.1f}}}$, $10^{{{:.1f}}}$]".format(np.log10(bins_new[i]), np.log10(bins_new[i + 1])))
