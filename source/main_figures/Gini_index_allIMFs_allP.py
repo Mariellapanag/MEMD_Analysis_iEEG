@@ -96,10 +96,10 @@ def summarise_allP():
             # Set the x labels
             ax.set_xticklabels(bin_labels)
             ax.set(ylim = (0,0.3), yticks = [0.0, 0.05,0.10,0.15,0.20,0.25,0.30])
-            plt.xticks(rotation=30)
+            plt.xticks(rotation=20)
             plt.title(feature)
             plt.ylabel('Gini index')
-            plt.xlabel('IMF Dominant Frequency (cycles/day)')
+            plt.xlabel('IMF Dominant Frequency (cycles/day)', fontsize = 8)
             plt.tight_layout ()
             canvas = FigureCanvasPdf(fig)
             canvas.print_figure(pages)
