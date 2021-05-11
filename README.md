@@ -34,7 +34,7 @@ In this section we provide the code for computing and generating the some of the
 
 ## <a name="dist-heatmaps"></a> Seizure Dissimilarity and Seizure IMF Distance Heatmaps
 
-In order to generate the heatmap plots^* of seizure dissimilarity and seizure IMF distances,
+In order to generate the heatmap plots of seizure dissimilarity and seizure IMF distances,
  you need to run the following python scripts:
  - funcs_need/`sz_dist_raw.py`
  - main_figures/`Heatmaps_sz_diss_dist_raw.py`
@@ -45,7 +45,7 @@ In order to generate the heatmap plots^* of seizure dissimilarity and seizure IM
 In order to generate the heatmap plots of standardised seizure dissimilarity and standardised seizure IMF distances,
  you need to run the following python scripts:
  - funcs_need/`sz_dist_raw.py`
- - funcs_need/`sz_diss_dist_stand_raw.py`
+ - funcs_need/`sz_dist_stand_raw.py`
  - main_figures/`Heatmaps_sz_diss_dist_stand_raw.py`
 
 *Plots generated only for patients with more than 5 seizures*
