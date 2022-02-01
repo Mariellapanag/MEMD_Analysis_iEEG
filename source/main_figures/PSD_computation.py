@@ -26,8 +26,8 @@ info_path = os.path.join("data", "info")
 # Get the name of the current script
 folder = os.path.basename(__file__) # This will be used to specify the name of the file that the output will be stored in the file results
 folder = folder.split(".py")[0]
-
-# in_path = files[0]
+#folder = "PSD_computation"
+#in_path = files[0]
 
 def process_file(in_path):
     """Weighted power - frequency computation for all IMF*DIM
@@ -205,9 +205,9 @@ def process_file(in_path):
     ax.set_facecolor('xkcd:white')
     x = 1/bin_cntrs_y
     for imf in range(0, n_imfs-1):
-        # plot = plt.plot(1/bin_cntrs_y, all_imfs[imf,:], alpha=0.7, label="IMF{}".format(imf+1),
+        # plot = plt.plot(x, all_imfs[imf,:], alpha=0.7, label="IMF{}".format(imf+1),
         #                 color = colors[imf] , linewidth = 1)
-        plot = plt.plot(bin_cntrs_y, all_imfs[imf,:], alpha=0.7, label="IMF{}".format(imf+1), linewidth = 1)
+        plot = plt.plot(x, all_imfs[imf,:], alpha=0.7, label="IMF{}".format(imf+1), linewidth = 1)
         colors.append(plot[0].get_color ())
     total = np.sum(all_imfs[:-1,:], axis=0)
     # total = np.sum(all_imfs[:-1,], axis=0)
@@ -220,7 +220,7 @@ def process_file(in_path):
     plt.yscale ( "log" )
     ax.legend (loc='center left', bbox_to_anchor=(1, 0.5))
     #plt.xlim(0.1, 100)
-    plt.xlim(x.min(), 100)
+    plt.xlim(x.min(), 1000)
     plt.ylim ( 1e-07, 1e-03 )
     plt.tight_layout ()
     format = "pdf"
@@ -258,7 +258,7 @@ def parallel_process():
     files = [os.path.join(ROOT_DIR, input_path, folder) for folder in folders]
 
     # test the code
-    # files = files[17:18]
+    # files = files[5:6]
 
     start_time = time.time ()
     # Test to make sure concurrent map is working
