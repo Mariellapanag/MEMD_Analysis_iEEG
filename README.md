@@ -187,6 +187,4 @@ Mantel test results are also generated, but not displayed in the title of the sc
      print ( "Processed {} files in {:.2f} seconds.".format ( processed, end_time - start_time ) )
  
  ```
- The above code chunk is not included in the following python scripts:
-  - `FDR_Mantel_test_raw.py`
 
