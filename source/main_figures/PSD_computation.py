@@ -194,6 +194,42 @@ def process_file(in_path):
     #fig.set_size_inches(66/25.4, 54/25.4)
     plt.savefig ( os.path.join ( out_subfolder, fig_name ), dpi = 100)
     plt.close ( 'all' )
+
+    '''Plot imfs without last IMF - using cycle length'''
+
+    # colors = ["#0a3955","#174c6f", "#1b5b85", "#3b526d", "#466484", "#4e7399",
+    #           "#68738c", "#7484a0", "#7c92b0", "#969cae", "#a1aabd", "#a8b3c9", "#c9cbd5", "#cfd2de",
+    #           "#d4d8e4","#bfbdbb"]
+    colors = []
+    fig, ax = plt.subplots ( figsize=(6,4) )
+    ax.set_facecolor('xkcd:white')
+    x = 1/bin_cntrs_y
+    for imf in range(0, n_imfs-1):
+        # plot = plt.plot(1/bin_cntrs_y, all_imfs[imf,:], alpha=0.7, label="IMF{}".format(imf+1),
+        #                 color = colors[imf] , linewidth = 1)
+        plot = plt.plot(bin_cntrs_y, all_imfs[imf,:], alpha=0.7, label="IMF{}".format(imf+1), linewidth = 1)
+        colors.append(plot[0].get_color ())
+    total = np.sum(all_imfs[:-1,:], axis=0)
+    # total = np.sum(all_imfs[:-1,], axis=0)
+    plt.plot(1/np.squeeze(bin_cntrs_y), np.squeeze(total),  label="SUM", alpha=0.8, color="black" )
+    ax.tick_params(axis = 'both', which = 'major', labelsize = 8)
+    ax.tick_params(axis = 'both', which = 'minor', labelsize = 8)
+    plt.xlabel ( "Cycle length" )
+    plt.ylabel ( "Power" )
+    plt.xscale ( "log" )
+    plt.yscale ( "log" )
+    ax.legend (loc='center left', bbox_to_anchor=(1, 0.5))
+    #plt.xlim(0.1, 100)
+    plt.xlim(x.min(), 100)
+    plt.ylim ( 1e-07, 1e-03 )
+    plt.tight_layout ()
+    format = "pdf"
+    name = "AllIMFs_psd_wo_lastIMF_cycle_length{}".format (id_patient )
+    fig_name = "{}.{}".format ( name, format )
+    #fig.set_size_inches(66/25.4, 54/25.4)
+    plt.savefig ( os.path.join ( out_subfolder, fig_name ), dpi = 100)
+    plt.close ( 'all' )
+
     '''Compute and save the dominant frequency based on the above calculation'''
     idfreq = np.argmax ( all_imfs, axis=1 )
     dominant_frequency = np.empty(n_imfs)
