@@ -16,7 +16,7 @@ MEMD_Analysis_iEEG
 * [Run for one patient or all at once](#choice-of-run)
 
 # <a name="general-info"></a> General info
-This repository contains python code for generating the main figures of the paper "" 
+This repository contains python code for generating the main figures of the paper "Fluctuations in EEG band power at subject-specific timescales over minutes to days explain changes in seizure evolutions". 
 
 # <a name="setup"></a> Setup
 ## <a name="results-folder"></a> Choose the name of the folder _results_
