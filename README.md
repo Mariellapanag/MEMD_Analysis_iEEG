@@ -18,7 +18,11 @@ MEMD_Analysis_iEEG
 # <a name="general-info"></a> General info
 This repository contains python code for generating the main figures of the paper "Fluctuations in EEG band power at subject-specific timescales over minutes to days explain changes in seizure evolutions". 
 
-**Related paper**: 
+**Availability in [Zenodo](https://zenodo.org/)**
+The current code is published in [Zenodo](https://zenodo.org/) under this link: https://dx-doi-org.libproxy.ncl.ac.uk/10.5281/zenodo.5798022
+
+
+**Related paper** 
 
 Panagiotopoulou M, Papasavvas CA, Schroeder GM, Thomas RH, Taylor PN, Wang Y. Fluctuations in EEG band power at subject-specific timescales over minutes to days explain changes in seizure evolutions. Hum Brain Mapp. Published online 4 February 2022. doi:10.1002/hbm.25796.
 
